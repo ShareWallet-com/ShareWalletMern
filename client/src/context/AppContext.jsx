@@ -18,15 +18,11 @@ export const AppContextProvider = (props)=>{
             const {data} = await axios.get(backendUrl + 'api/auth/is-auth')
             if(data.success) {
                 setIsLoggedin(true)
-                await getUserData()
-            } else {
-                setIsLoggedin(false)
-                setUserData(false)
+                getUserData()
             }
         } catch (error) {
-            console.log("Auth state error:", error.message)
-            setIsLoggedin(false)
-            setUserData(false)
+            toast.error(error.message)
+            
         }
     }
 
@@ -37,14 +33,12 @@ export const AppContextProvider = (props)=>{
     });
 
     if (res.data.success) {
-      setUserData(res.data.user);
+      setUserData(res.data.user);  // ✅ This should be called
     } else {
       console.log("Failed to fetch user:", res.data.message);
-      setUserData(false);
     }
   } catch (error) {
     console.log("Error fetching user data:", error.message);
-    setUserData(false);
   }
 };
     useEffect(() => {
