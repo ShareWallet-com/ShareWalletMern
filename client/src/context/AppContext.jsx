@@ -15,30 +15,36 @@ export const AppContextProvider = (props)=>{
     const [userData, setUserData] = useState(false);
     const getAuthState = async () => {
         try {
-            const {data} = await axios.get(backendUrl + 'api/auth/is-auth')
+            const {data} = await axios.get(backendUrl + '/api/auth/is-auth')
             if(data.success) {
                 setIsLoggedin(true)
-                getUserData()
+                await getUserData()
+            } else {
+                setIsLoggedin(false)
+                setUserData(false)
             }
         } catch (error) {
-            toast.error(error.message)
-            
+            console.log("Auth state error:", error.message)
+            setIsLoggedin(false)
+            setUserData(false)
         }
     }
 
     const getUserData = async () => {
   try {
-    const res = await axios.get(backendUrl + 'api/user/data', {
+    const res = await axios.get(backendUrl + '/api/user/data', {
       withCredentials: true
     });
 
     if (res.data.success) {
-      setUserData(res.data.user);  // ✅ This should be called
+      setUserData(res.data.user);
     } else {
       console.log("Failed to fetch user:", res.data.message);
+      setUserData(false);
     }
   } catch (error) {
     console.log("Error fetching user data:", error.message);
+    setUserData(false);
   }
 };
     useEffect(() => {
