@@ -28,7 +28,7 @@ export const AppContextProvider = (props)=>{
 
     const getUserData = async () => {
   try {
-    const res = await axios.get(backendUrl + 'api/user/data', {
+    const res = await axios.get(`${backendUrl}/api/auth/is-auth`, {
       withCredentials: true
     });
 
