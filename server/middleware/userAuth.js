@@ -1,13 +1,8 @@
 import jwt from 'jsonwebtoken';
-
-console.log("Cookies received:", req.cookies);
-
 const userAuth = async (req,res,next)=>{
-    
+    console.log("Auth middleware: req.cookies =", req.cookies);
     const {token} = req.cookies;
-    console.log("Cookies:", req.cookies);
     if(!token){
-        console.log("Cookies received:", req.cookies);
         return res.json({success:false,message:"Unauthorized access, please login first"});
     }
 
