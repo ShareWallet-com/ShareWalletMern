@@ -11,7 +11,7 @@ const userAuth = async (req,res,next)=>{
 
         if(tokenDecode.id){
 
-            req.email = tokenDecode.id;
+            req.userId = tokenDecode.id;
 
         }else{
             return res.json({success:false,message:"Not Authorized, please login first"});

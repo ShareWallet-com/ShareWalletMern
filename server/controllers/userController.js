@@ -2,8 +2,8 @@ import userModel from '../models/userModel.js';
 
 export const getUserData = async(req,res) =>{
     try {
-        const email = req.body;
-        const user = await userModel.findOne({email});
+        const userId = req.userId;
+        const user = await userModel.findById(userId);
         if(!user){
             return { success: false, message: "User not found" };
         }
