@@ -109,8 +109,9 @@ export const logout = async(req,res)=>{
             path: '/',
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Strict'
+            sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Strict',
           });
+          
           
 
         return res.json({success:true,message:"Logged out successfully"});

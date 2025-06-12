@@ -33,17 +33,24 @@ const Navbar = () => {
       }
     }
 
-    const logout = async ()=>{
+    const logout = async () => {
       try {
         axios.defaults.withCredentials = true;
-        const {data} = await axios.post(backendUrl + 'api/auth/logout')
-        data.success && setIsLoggedin(false)
-        data.success && setUserData(null)  // ✅ correct
-        navigate('/')
+        const { data } = await axios.post(backendUrl + 'api/auth/logout');
+    
+        if (data.success) {
+          setIsLoggedin(false);
+          setUserData(null);
+          navigate('/');
+          toast.success("Logged out successfully");
+        } else {
+          toast.error("Logout failed");
+        }
       } catch (error) {
-        toast.error(error.message);
+        toast.error(error.response?.data?.message || error.message);
       }
-    }
+    };
+    
   return (
     <div className="flex items-center justify-between w-full px-4 py-2">
   {/* Logo on Left */}
