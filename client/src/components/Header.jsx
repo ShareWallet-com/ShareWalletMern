@@ -6,7 +6,7 @@ function Header() {
   const {userData} = useContext(AppContent);
 
   return (
-    <div className="flex items-center justify-center bg-[#333A5C] h-[90vh]">
+    <div className="flex items-center justify-center bg-gray-100 h-[90vh]">
   <div className="p-6 text-center bg-white shadow-xl rounded-2xl">
     <h1 className="mb-4 text-2xl font-bold">
       Hey {userData ? userData.name : " "}, Welcome to <span className="text-indigo-600">ShareWallet</span>
