@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 connectDB();
 
-const allowedOrigins = ['http://localhost:5173'];
+const allowedOrigins = ['http://localhost:5173','https://sharewalletmern-frontend.onrender.com'];
 
 // const allowedOrigins = ['http://localhost:5173', 'https://your-frontend-domain.com'];
 
