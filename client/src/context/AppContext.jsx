@@ -44,9 +44,29 @@ export const AppContextProvider = (props)=>{
     console.log("Error fetching user data:", error.message);
   }
 };
-    useEffect(() => {
-        getAuthState();
-    },[])
+useEffect(() => {
+  const checkAuth = async () => {
+    try {
+      const { data } = await axios.get(backendUrl + 'api/auth/is-auth', {
+        withCredentials: true
+      });
+
+      if (data.success) {
+        setIsLoggedin(true);
+        setUserData(data.user);
+      } else {
+        setIsLoggedin(false);
+        setUserData(null);
+      }
+    } catch (err) {
+      setIsLoggedin(false);
+      setUserData(null);
+    }
+  };
+
+  checkAuth();
+}, []);
+
 
     const value = {
         backendUrl,
