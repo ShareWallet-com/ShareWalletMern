@@ -26,14 +26,12 @@ function Login() {
             axios.defaults.withCredentials = true;
 
             if(state === 'Sign Up'){
-               const {data} = await axios.post(backendUrl + 'api/auth/register',{
-                    name,
-                    email,
-                    password,
-                    mobileNumber,
-                    dateofBirth,
-                    username
-                })
+              await axios.post(backendUrl + 'api/auth/register', {
+                name, email, password, mobileNumber, dateofBirth, username
+            }, {
+                withCredentials: true
+            })
+            
                 if(data.success){
                     setIsLoggedin(true)
                     await getUserData()
@@ -42,10 +40,11 @@ function Login() {
                     toast.error(data.message)
                 }
             }else{
-                const {data} = await axios.post(backendUrl + 'api/auth/login',{
-                    email,
-                    password,
-                })
+              await axios.post(backendUrl + 'api/auth/login', {
+                email, password
+            }, {
+                withCredentials: true
+            })
                 if (data.success) {
                         setIsLoggedin(true)
                         await getUserData() 
