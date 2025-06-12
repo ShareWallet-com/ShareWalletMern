@@ -4,7 +4,6 @@ import { AppContent } from '../context/AppContext'; // Adjust the path as needed
 function Header() {
 
   const {userData} = useContext(AppContent);
-  console.log("userData:", userData);
 
   return (
     <div className="flex items-center justify-center bg-gray-100 h-[90vh]">
