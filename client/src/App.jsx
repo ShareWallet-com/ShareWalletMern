@@ -6,6 +6,7 @@ import EmailVerify from './pages/EmailVerify'
 import ResetPassword from './pages/ResetPassword'
 import {ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import Dashboard from './components/Dashboard'
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path='/login' element={<Login/>}/>
         <Route path='/email-verify' element={<EmailVerify/>}/>
         <Route path='/reset-passsword' element={<ResetPassword/>}/>
+        <Route path='/dashboard' element={Dashboard}/>
       </Routes>
     </div>
   )
