@@ -65,7 +65,7 @@ function Login() {
     
     {/* Logo */}
     <div className="flex justify-center w-full mb-2">
-      <img src="https://ik.imagekit.io/sharewallet/Group%205.png?updatedAt=1749731462526" alt="Logo" className="w-auto h-12" />
+      <img src="https://ik.imagekit.io/sharewallet/Group%2068.png?updatedAt=1749847778836" alt="Logo" className="w-auto h-12" />
     </div>
 
     {/* Header Text */}
