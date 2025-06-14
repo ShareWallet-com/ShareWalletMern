@@ -35,7 +35,7 @@ function Login() {
                 if(data.success){
                     setIsLoggedin(true);
                     await getUserData();
-                    navigate('/');
+                    navigate('/Dashboard');
                 } else {
                     toast.error(data.message)
                 }
@@ -48,7 +48,7 @@ function Login() {
                 if (data.success) {
                         setIsLoggedin(true);
                         await getUserData();
-                        navigate('/');
+                        navigate('/Dashboard');
                         }
  else {
                     toast.error(data.message)

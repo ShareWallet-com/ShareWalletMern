@@ -54,9 +54,14 @@ const Navbar = () => {
     <div className="flex items-center justify-between w-full px-4 py-2">
   {/* Logo on Left */}
   <div>
-    <img src="https://ik.imagekit.io/sharewallet/Group%205.png?updatedAt=1749731462526" alt="Logo" className="w-auto h-10" />
+    <img src="https://ik.imagekit.io/sharewallet/Group%2068.png?updatedAt=1749847778836" alt="Logo" className="w-auto h-10" />
   </div>
-
+    <ul className='flex gap-8'>
+      <li className='cursor-pointer'>Key Features</li>
+      <li className='cursor-pointer'>Explore</li>
+      <li className='cursor-pointer'>About</li>
+      <li className='cursor-pointer'>Contact</li>
+    </ul>
   {/* User Avatar or Login on Right */}
   <div>
     {userData ? (
@@ -71,8 +76,15 @@ const Navbar = () => {
           </ul>
         </div>
       </div>
-    ) : (
-      <button onClick={() => navigate('/login')}>Login</button>
+    ) : (<>
+            <div className='flex gap-4'>
+              <button onClick={() => navigate('/login')} className='px-2 py-2 border-2 w-[5vw] border-[#4F47EA] rounded-xl'>Login</button>
+              <button onClick={() => navigate('/login')} className='px-2 py-2 border-2 w-[5vw] bg-[#4F47EA] text-white rounded-xl'>SignUp</button>
+            </div>
+            
+    
+        </>
+      
     )}
   </div>
 </div>
