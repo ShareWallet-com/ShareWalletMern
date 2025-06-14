@@ -3,12 +3,14 @@ import Navbar from '../components/Navbar'
 import Header from '../components/Header'
 import Header2 from '../components/Header2'
 import Dashboard from '../components/Dashboard'
+import Page2 from '../components/Page2'
 
 function Home() {
   return (
     <div>
         <Navbar/>
         <Header2/>
+        {/* <Page2/> */}
         {/* <Dashboard/> */}
     </div>
     

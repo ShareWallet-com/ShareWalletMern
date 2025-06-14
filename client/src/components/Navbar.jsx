@@ -80,10 +80,23 @@ const Navbar = () => {
         </div>
       </div>
     ) : (<>
-            <div className='flex gap-4'>
-              <button onClick={() => navigate('/login')} className='px-2 py-2 border-2 w-[5vw] border-[#4F47EA] rounded-xl'>Login</button>
-              <button onClick={() => navigate('/login')} className='px-2 py-2 border-2 w-[5vw] bg-[#4F47EA] text-white rounded-xl'>SignUp</button>
-            </div>
+            <div className="flex flex-row gap-4">
+  <button 
+    onClick={() => navigate('/login')} 
+    className="px-4 py-2 border-2 border-[#4F47EA] rounded-xl text-sm sm:text-base w-28 sm:w-32"
+  >
+    Login
+  </button>
+
+  <button 
+    onClick={() => navigate('/login')} 
+    className="px-4 py-2 border-2 bg-[#4F47EA] text-white rounded-xl text-sm sm:text-base w-28 sm:w-32"
+  >
+    SignUp
+  </button>
+</div>
+
+
             
     
         </>
