@@ -142,7 +142,7 @@ function Login() {
 
       <button
         type="submit"
-        className="px-4 py-2 text-white transition duration-200 bg-blue-600 rounded-lg hover:bg-blue-700"
+        className="px-4 py-2 text-white transition duration-200 bg-indigo-600 rounded-lg hover:bg-indigo-700"
       >
         {state}
       </button>
