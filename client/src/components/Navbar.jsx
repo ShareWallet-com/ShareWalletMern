@@ -56,12 +56,15 @@ const Navbar = () => {
   <div>
     <img src="https://ik.imagekit.io/sharewallet/Group%2068.png?updatedAt=1749847778836" alt="Logo" className="w-auto h-10" />
   </div>
-    <ul className='flex gap-8'>
+  {userData ? " " :
+       <ul className='flex gap-8'>
       <li className='cursor-pointer'>Key Features</li>
       <li className='cursor-pointer'>Explore</li>
       <li className='cursor-pointer'>About</li>
       <li className='cursor-pointer'>Contact</li>
     </ul>
+  }
+   
   {/* User Avatar or Login on Right */}
   <div>
     {userData ? (
