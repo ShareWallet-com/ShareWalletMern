@@ -54,8 +54,21 @@ const Navbar = () => {
     <div className="flex items-center justify-between w-full px-4 py-2">
   {/* Logo on Left */}
   <div>
-    <img src="https://ik.imagekit.io/sharewallet/Group%2068.png?updatedAt=1749847778836" alt="Logo" className="w-auto h-10" />
-  </div>
+  {/* Desktop Logo */}
+  <img
+    src="https://ik.imagekit.io/sharewallet/Group%2068.png?updatedAt=1749847778836"
+    alt="Logo"
+    className="hidden w-auto h-10 sm:block"
+  />
+
+  {/* Mobile Logo */}
+  <img
+    src="https://ik.imagekit.io/sharewallet/Group%2076.png?updatedAt=1749897228344"
+    alt="Mobile Logo"
+    className="block w-auto h-10 sm:hidden"
+  />
+</div>
+
   {userData ? " " :
        <ul className='hidden gap-8 sm:flex'>
       <li className='cursor-pointer'>Key Features</li>
