@@ -17,7 +17,7 @@ const App = () => {
         <Route path='/login' element={<Login/>}/>
         <Route path='/email-verify' element={<EmailVerify/>}/>
         <Route path='/reset-passsword' element={<ResetPassword/>}/>
-        <Route path='/dashboard' element={Dashboard}/>
+        <Route path='/dashboard' element={<Dashboard/>}/>
       </Routes>
     </div>
   )
