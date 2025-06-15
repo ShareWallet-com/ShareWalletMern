@@ -29,5 +29,6 @@ app.use('/api/auth',authRouter)
 app.use('/api/user',userRouter)
 app.use('/api/friends', friendRoutes);
 
+
 app.listen(PORT,()=>console.log(`Server is running on port ${PORT}`)
 )

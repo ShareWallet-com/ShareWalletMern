@@ -85,3 +85,28 @@ export const acceptFriendRequest = async (req, res) => {
   }
 };
 
+export const removeFriend = async (req, res) => {
+  const userId = req.user.id;           // Logged-in user
+  const friendId = req.params.id;       // Friend to remove
+
+  try {
+    const user = await userModel.findById(userId);
+    const friend = await userModel.findById(friendId);
+
+    if (!user || !friend) {
+      return res.status(404).json({ success: false, message: "User or friend not found" });
+    }
+
+    // Remove each other from friends array
+    user.friends = user.friends.filter(id => id.toString() !== friendId);
+    friend.friends = friend.friends.filter(id => id.toString() !== userId);
+
+    await user.save();
+    await friend.save();
+
+    return res.json({ success: true, message: "Friend removed successfully" });
+  } catch (err) {
+    console.error("Remove friend error:", err.message);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
