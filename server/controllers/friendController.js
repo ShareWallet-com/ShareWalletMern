@@ -62,8 +62,16 @@ export const acceptFriendRequest = async (req, res) => {
     const receiver = await userModel.findById(receiverId);
     const sender = await userModel.findById(senderId);
 
-    receiver.friendRequests = receiver.friendRequests.filter(id => id.toString() !== senderId);
-    sender.sentRequests = sender.sentRequests.filter(id => id.toString() !== receiverId);
+    if (!receiver || !sender) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    receiver.friendRequests = receiver.friendRequests.filter(
+      id => id.toString() !== senderId
+    );
+    sender.sentRequests = sender.sentRequests.filter(
+      id => id.toString() !== receiverId
+    );
 
     receiver.friends.push(senderId);
     sender.friends.push(receiverId);
@@ -76,3 +84,4 @@ export const acceptFriendRequest = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
