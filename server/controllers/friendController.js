@@ -16,8 +16,16 @@ export const sendFriendRequest = async (req, res) => {
   const senderId = req.user.id;
   const receiverId = req.params.id;
 
+  console.log('📨 Friend request received:');
+  console.log('Sender:', senderId);
+  console.log('Receiver:', receiverId);
+
   if (!senderId || !receiverId) {
     return res.status(400).json({ success: false, message: "Missing sender or receiver ID" });
+  }
+
+  if (senderId === receiverId) {
+    return res.status(400).json({ success: false, message: "You can't send a friend request to yourself" });
   }
 
   try {
@@ -43,6 +51,7 @@ export const sendFriendRequest = async (req, res) => {
     return res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 
 export const acceptFriendRequest = async (req, res) => {

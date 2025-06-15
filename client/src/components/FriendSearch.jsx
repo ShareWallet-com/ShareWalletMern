@@ -21,22 +21,26 @@ const FriendSearch = () => {
     }
   };
 
-  const sendRequest = async (receiverId) => {
-    if (!currentUserId) {
-      alert("You're not logged in.");
-      return;
-    }
+const sendRequest = async (receiverId) => {
+  if (!currentUserId) {
+    alert("You're not logged in.");
+    return;
+  }
 
-    console.log('Sending friend request from:', currentUserId, 'to:', receiverId);
-    try {
-      await axios.post(`${backendUrl}api/friends/${receiverId}/send-request`, {
-        senderId: currentUserId,
-      });
-      alert('Friend request sent!');
-    } catch (error) {
-      alert(error?.response?.data?.message || 'Request failed');
-    }
-  };
+  console.log('Sending friend request from:', currentUserId, 'to:', receiverId);
+  try {
+    await axios.post(
+      `${backendUrl}api/friends/${receiverId}/send-request`,
+      {}, // ✅ Empty body
+      { withCredentials: true } // ✅ Ensure cookie is sent
+    );
+    alert('Friend request sent!');
+  } catch (error) {
+    console.error('Request error:', error);
+    alert(error?.response?.data?.message || 'Request failed');
+  }
+};
+
 
   return (
     <div className="p-4">
