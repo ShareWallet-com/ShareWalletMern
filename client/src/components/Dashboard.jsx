@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { AppContent } from '../context/AppContext';
 import Navbar from './Navbar';
 import FriendsPage from '../pages/Friends';
+import FriendsList from './FriendsList';
 
 function Dashboard() {
   const { userData } = useContext(AppContent);
@@ -11,6 +12,7 @@ return (
       <Navbar/>
     </div>
     <FriendsPage/>
+    <FriendsList/>
     <div className="flex flex-col items-center justify-center bg-gray-100 h-[90vh]">
       <div className="p-6 text-center bg-white shadow-xl rounded-2xl">
         <h1 className="mb-4 text-2xl font-bold">
