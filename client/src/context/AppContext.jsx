@@ -34,26 +34,30 @@ export const AppContextProvider = (props) => {
   };
 
   // Check authentication on load
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await axios.get(backendUrl + 'api/auth/is-auth');
-        if (res.data.success) {
-          setIsLoggedin(true);
-          setUserData(res.data.user); // ✅ Set user directly
-        } else {
-          setIsLoggedin(false);
-          setUserData(null);
-        }
-      } catch (err) {
-        console.log("Auth check error:", err.message);
+useEffect(() => {
+  const checkAuth = async () => {
+    try {
+      const res = await axios.get(backendUrl + 'api/auth/is-auth', {
+        withCredentials: true
+      });
+
+      if (res.data.success) {
+        setIsLoggedin(true);
+        await getUserData(); // ✅ fetch detailed user info
+      } else {
         setIsLoggedin(false);
         setUserData(null);
       }
-    };
+    } catch (err) {
+      console.log("Auth check error:", err.message);
+      setIsLoggedin(false);
+      setUserData(null);
+    }
+  };
 
-    checkAuth();
-  }, []);
+  checkAuth();
+}, []);
+
 
   // Value provided to children
   const value = {
