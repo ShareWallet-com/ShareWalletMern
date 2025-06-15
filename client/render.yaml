@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: sharewalletmern-frontend
+    env: static
+    staticPublishPath: dist
+    buildCommand: npm run build
+    routes:
+      - source: /.*
+        destination: /index.html
