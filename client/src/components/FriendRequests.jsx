@@ -32,21 +32,28 @@ const FriendRequests = () => {
       alert('Friend request accepted!');
       setRequests((prev) => prev.filter(id => id !== senderId));
     } catch (error) {
-      alert(error.message , 'Error accepting request');
+      console.error('Accept error:', error);
+      alert(error?.response?.data?.message || 'Error accepting request');
     }
   };
 
   return (
     <div className="p-4">
       <h2 className="mb-2 text-xl font-bold">Friend Requests</h2>
-      {requests.length === 0 ? (
+
+      {!currentUserId ? (
+        <p className="text-red-600">Please log in to view your friend requests.</p>
+      ) : requests.length === 0 ? (
         <p>No friend requests</p>
       ) : (
         <ul>
           {requests.map(id => (
             <li key={id} className="flex items-center justify-between mb-2">
               <span>User ID: {id}</span>
-              <button onClick={() => acceptRequest(id)} className="px-2 py-1 text-white bg-blue-600 rounded">
+              <button
+                onClick={() => acceptRequest(id)}
+                className="px-2 py-1 text-white bg-blue-600 rounded"
+              >
                 Accept
               </button>
             </li>
