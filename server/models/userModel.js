@@ -12,6 +12,9 @@ const userSchema = new mongoose.Schema({
     isVerified: {type: Boolean, default: false},
     resetOtp: {type: String, default:''},
     resetOtpExpireAt: {type: Number, default: 0},
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+    friendRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+    sentRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
 });
 
 const userModel = mongoose.models.user ||  mongoose.model("user", userSchema);
