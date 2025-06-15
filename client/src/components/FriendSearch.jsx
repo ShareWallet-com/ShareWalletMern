@@ -9,7 +9,7 @@ const FriendSearch = ({ currentUserId }) => {
 
   const handleSearch = async () => {
     try {
-      const res = await axios.get(backendUrl + `/api/friends/search?query=${query}`);
+      const res = await axios.get(backendUrl + `api/friends/search?query=${query}`);
       setResults(res.data);
     } catch (error) {
       console.error('Search error:', error);
@@ -18,7 +18,7 @@ const FriendSearch = ({ currentUserId }) => {
 
   const sendRequest = async (receiverId) => {
     try {
-      await axios.post(backendUrl + `/api/friends/${receiverId}/send-request`, { senderId: currentUserId });
+      await axios.post(backendUrl + `api/friends/${receiverId}/send-request`, { senderId: currentUserId });
       alert('Friend request sent!');
     } catch (error) {
       alert(error.response.data.message);

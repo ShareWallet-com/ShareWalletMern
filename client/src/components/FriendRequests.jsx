@@ -10,7 +10,7 @@ const FriendRequests = ({ currentUserId }) => {
 useEffect(() => {
   const fetchUser = async () => {
     try {
-      const res = await axios.get(backendUrl + ` /api/users/${currentUserId}`);
+      const res = await axios.get(backendUrl + ` api/users/${currentUserId}`);
       setRequests(res.data.friendRequests || []); // fallback to empty array
     } catch (error) {
       console.error('Error fetching user:', error);
@@ -23,7 +23,7 @@ useEffect(() => {
 
   const acceptRequest = async (senderId) => {
     try {
-      await axios.post( backendUrl + `/api/friends/${senderId}/accept-request`, {
+      await axios.post( backendUrl + `api/friends/${senderId}/accept-request`, {
         receiverId: currentUserId,
       });
       alert('Friend request accepted!');
