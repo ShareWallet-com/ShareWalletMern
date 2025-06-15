@@ -6,6 +6,7 @@ import {
 } from '../controllers/friendController.js';
 import userAuth from '../middleware/userAuth.js';
 import { removeFriend } from '../controllers/friendController.js';
+import isAuth from '../middleware/userAuth.js'
 
 
 const router = express.Router();
