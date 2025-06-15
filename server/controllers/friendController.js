@@ -16,23 +16,34 @@ export const sendFriendRequest = async (req, res) => {
   const { senderId } = req.body;
   const receiverId = req.params.id;
 
+  if (!senderId || !receiverId) {
+    return res.status(400).json({ success: false, message: "Missing sender or receiver ID" });
+  }
+
   try {
     const sender = await userModel.findById(senderId);
     const receiver = await userModel.findById(receiverId);
 
-    if (!receiver.friendRequests.includes(senderId)) {
-      receiver.friendRequests.push(senderId);
-      sender.sentRequests.push(receiverId);
-      await sender.save();
-      await receiver.save();
-      return res.json({ message: 'Friend request sent' });
+    if (!sender || !receiver) {
+      return res.status(404).json({ success: false, message: "Sender or receiver not found" });
     }
 
-    res.status(400).json({ message: 'Already sent request' });
+    if (receiver.friendRequests.includes(senderId)) {
+      return res.status(400).json({ success: false, message: "Request already sent" });
+    }
+
+    receiver.friendRequests.push(senderId);
+    sender.sentRequests.push(receiverId);
+
+    await receiver.save();
+    await sender.save();
+
+    return res.json({ success: true, message: "Friend request sent" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 export const acceptFriendRequest = async (req, res) => {
   const { receiverId } = req.body;
