@@ -1,87 +1,75 @@
 import axios from "axios";
-import { createContext, useEffect } from "react";
-import { useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
+// Create Context
+export const AppContent = createContext();
 
-export const AppContent = createContext()
-
-export const AppContextProvider = (props)=>{
-
+// App Context Provider
+export const AppContextProvider = (props) => {
+  // Axios config
   axios.defaults.withCredentials = true;
 
-    const backendUrl = import.meta.env.VITE_BACKEND_URL
-    const [isLoggedIn, setIsLoggedin] = useState(false);
-    const [userData, setUserData] = useState(false);
-    
-    // const getAuthState = async () => {
-    //     try {
-    //       axios.defaults.withCredentials = true;
-    //         const {data} = await axios.get(backendUrl + 'api/auth/is-auth')
-    //         if(data.success) {
-    //             setIsLoggedin(true)
-    //             getUserData()
-    //         }
-    //     } catch (error) {
-    //         toast.error(error.message)
-            
-    //     }
-    // }
+  // Constants
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-    const getUserData = async () => {
-  try {
-    axios.defaults.withCredentials = true;
-    const res = await axios.get(backendUrl + 'api/user/data', {
-      withCredentials: true
-    });
+  // State
+  const [isLoggedIn, setIsLoggedin] = useState(false);
+  const [userData, setUserData] = useState(null); // ✅ Corrected: use null instead of false
 
-    if (res.data.success) {
-      setUserData(res.data.user);  // ✅ This should be called
-    } else {
-      console.log("Failed to fetch user:", res.data.message);
-    }
-  } catch (error) {
-    console.log("Error fetching user data:", error.message);
-  }
-};
-useEffect(() => {
-  const checkAuth = async () => {
+  // Fetch logged-in user data
+  const getUserData = async () => {
     try {
-      const { data } = await axios.get(backendUrl + 'api/auth/is-auth', {
-        withCredentials: true
-      });
-
-      if (data.success) {
-        setIsLoggedin(true);
-        setUserData(data.user);
+      const res = await axios.get(backendUrl + 'api/user/data');
+      if (res.data.success) {
+        setUserData(res.data.user);
       } else {
-        setIsLoggedin(false);
         setUserData(null);
+        toast.error("Failed to fetch user data");
       }
-    } catch (err) {
-      console.log(err.message);
-      
-      setIsLoggedin(false);
+    } catch (error) {
+      console.log("Error fetching user data:", error.message);
       setUserData(null);
     }
   };
 
-  checkAuth();
-}, []);
+  // Check authentication on load
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await axios.get(backendUrl + 'api/auth/is-auth');
+        if (res.data.success) {
+          setIsLoggedin(true);
+          setUserData(res.data.user); // ✅ Set user directly
+        } else {
+          setIsLoggedin(false);
+          setUserData(null);
+        }
+      } catch (err) {
+        console.log("Auth check error:", err.message);
+        setIsLoggedin(false);
+        setUserData(null);
+      }
+    };
 
+    checkAuth();
+  }, []);
 
-    const value = {
-        backendUrl,
-        isLoggedIn, setIsLoggedin,
-        userData, setUserData,
-        getUserData
-    }
+  // Value provided to children
+  const value = {
+    backendUrl,
+    isLoggedIn,
+    setIsLoggedin,
+    userData,
+    setUserData,
+    getUserData
+  };
 
+  return (
+    <AppContent.Provider value={value}>
+      {props.children}
+    </AppContent.Provider>
+  );
+};
 
-    return(
-        <AppContent.Provider value={value}>
-            {props.children}
-        </AppContent.Provider>
-    )
-}
 export default AppContent;
