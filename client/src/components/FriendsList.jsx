@@ -37,7 +37,6 @@ const FriendsList = () => {
           {friends.map(friend => (
             <li key={friend._id} className="flex items-center justify-between pb-1 border-b">
               <span>{friend.name}</span>
-              <span className="text-sm text-gray-500">{friend._id}</span>
             </li>
           ))}
         </ul>
