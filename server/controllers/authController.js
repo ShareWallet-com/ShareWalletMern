@@ -206,9 +206,18 @@ export const verifyEmail = async(req,res)=>{
 
 
 
+
+
 export const isAuthenticated = async (req, res) => {
   try {
-    const user = await userModel.findOne({email}); // remove password from response
+    const token = req.cookies.token;
+
+    if (!token) {
+      return res.json({ success: false, message: "No token provided" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await userModel.findById(decoded.id).select('-password');
 
     if (!user) {
       return res.json({ success: false, message: "User not found" });
@@ -222,6 +231,7 @@ export const isAuthenticated = async (req, res) => {
     return res.json({ success: false, message: error.message });
   }
 };
+
 
 
 //send password reset otp
