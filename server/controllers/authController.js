@@ -191,14 +191,25 @@ export const verifyEmail = async(req,res)=>{
 }
 
 
-export const isAuthenticated = async(req,res)=>{
-    try {
-        return res.json({success:true});
-    } catch (error) {
-        return res.json({success:false,message:error.message});
-        
+import userModel from '../models/User.js';
+
+export const isAuthenticated = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id).select('-password'); // remove password from response
+
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
     }
-}
+
+    return res.json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    return res.json({ success: false, message: error.message });
+  }
+};
+
 
 //send password reset otp
 export const sendResetOtp = async (req, res) => {
