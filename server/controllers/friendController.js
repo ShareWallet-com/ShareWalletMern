@@ -13,7 +13,7 @@ export const searchUsers = async (req, res) => {
 };
 
 export const sendFriendRequest = async (req, res) => {
-  const { senderId } = req.body;
+  const { senderId } = req.user.id;
   const receiverId = req.params.id;
 
   if (!senderId || !receiverId) {
