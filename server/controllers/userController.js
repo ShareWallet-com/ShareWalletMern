@@ -19,7 +19,10 @@ export const getUserData = async(req,res) =>{
                 dateOfBirth: user.dateOfBirth,
                 isVerified: user.isVerified,
                 createdAt: user.createdAt,
-                updatedAt: user.updatedAt
+                updatedAt: user.updatedAt,
+                friendRequests: user.friendRequests,
+                friends: user.friends,
+                sentRequests: user.sentRequests
             }
         });
         
