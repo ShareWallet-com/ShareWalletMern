@@ -11,24 +11,32 @@ const FriendRequests = () => {
   useEffect(() => {
     if (!currentUserId) return;
 
-    const fetchUser = async () => {
+    const fetchRequests = async () => {
       try {
-        const res = await axios.get(`${backendUrl}api/user/data`);
-        setRequests(res.data.friendRequests || []);
+        const res = await axios.get(`${backendUrl}api/user/data`, {
+          withCredentials: true, // ✅ Ensure token is sent
+        });
+
+        // ✅ Check that friendRequests exists on user
+        const friendRequests = res.data.user?.friendRequests || [];
+        setRequests(friendRequests);
       } catch (error) {
         console.error('Error fetching user:', error);
         setRequests([]);
       }
     };
 
-    fetchUser();
+    fetchRequests();
   }, [currentUserId, backendUrl]);
 
   const acceptRequest = async (senderId) => {
     try {
-      await axios.post(`${backendUrl}api/friends/${senderId}/accept-request`, {
-        receiverId: currentUserId,
-      });
+      await axios.post(
+        `${backendUrl}api/friends/${senderId}/accept-request`,
+        { receiverId: currentUserId },
+        { withCredentials: true } // ✅ important for auth
+      );
+
       alert('Friend request accepted!');
       setRequests((prev) => prev.filter(id => id !== senderId));
     } catch (error) {
