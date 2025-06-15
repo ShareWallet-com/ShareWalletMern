@@ -10,7 +10,7 @@ const FriendRequests = ({ currentUserId }) => {
 useEffect(() => {
   const fetchUser = async () => {
     try {
-      const res = await axios.get(backendUrl + ` api/users/${currentUserId}`);
+      const res = await axios.get(backendUrl + `api/users/${currentUserId}`);
       setRequests(res.data.friendRequests || []); // fallback to empty array
     } catch (error) {
       console.error('Error fetching user:', error);

@@ -18,6 +18,7 @@ const FriendSearch = ({ currentUserId }) => {
 
   const sendRequest = async (receiverId) => {
     try {
+        console.log('Sending friend request from:', currentUserId, 'to:', receiverId);
       await axios.post(backendUrl + `api/friends/${receiverId}/send-request`, { senderId: currentUserId });
       alert('Friend request sent!');
     } catch (error) {
