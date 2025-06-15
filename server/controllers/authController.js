@@ -195,7 +195,7 @@ export const verifyEmail = async(req,res)=>{
 
 export const isAuthenticated = async (req, res) => {
   try {
-    const user = await userModel.findById(req.user.id); // remove password from response
+    const user = await userModel.findOne({email}); // remove password from response
 
     if (!user) {
       return res.json({ success: false, message: "User not found" });
