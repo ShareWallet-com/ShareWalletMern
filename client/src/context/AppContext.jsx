@@ -1,52 +1,79 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 
+// Create Context
 export const AppContent = createContext();
 
+// App Context Provider
 export const AppContextProvider = (props) => {
+  // Axios config
   axios.defaults.withCredentials = true;
 
+  // Constants
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-  const [isLoggedIn, setIsLoggedin] = useState(false);
-  const [userData, setUserData] = useState(null);
 
+  // State
+  const [isLoggedIn, setIsLoggedin] = useState(false);
+  const [userData, setUserData] = useState(null); // ✅ Corrected: use null instead of false
+
+  // Fetch logged-in user data
   const getUserData = async () => {
     try {
-      const res = await axios.get(`${backendUrl}api/user/data`, {
-        withCredentials: true,
-      });
-
+      const res = await axios.get(backendUrl + 'api/user/data');
       if (res.data.success) {
         setUserData(res.data.user);
-        setIsLoggedin(true);
       } else {
         setUserData(null);
-        setIsLoggedin(false);
+        toast.error("Failed to fetch user data");
       }
     } catch (error) {
-      console.error("Error fetching user data:", error.message);
+      console.log("Error fetching user data:", error.message);
       setUserData(null);
-      setIsLoggedin(false);
     }
   };
 
-  useEffect(() => {
-    getUserData();
-  }, []);
+  // Check authentication on load
+useEffect(() => {
+  const checkAuth = async () => {
+    try {
+      const res = await axios.get(backendUrl + 'api/auth/is-auth', {
+        withCredentials: true
+      });
+
+      if (res.data.success) {
+        setIsLoggedin(true);
+        await getUserData(); // ✅ fetch detailed user info
+      } else {
+        setIsLoggedin(false);
+        setUserData(null);
+      }
+    } catch (err) {
+      console.log("Auth check error:", err.message);
+      setIsLoggedin(false);
+      setUserData(null);
+    }
+  };
+
+  checkAuth();
+}, []);
+
+
+  // Value provided to children
+  const value = {
+    backendUrl,
+    isLoggedIn,
+    setIsLoggedin,
+    userData,
+    setUserData,
+    getUserData
+  };
 
   return (
-    <AppContent.Provider
-      value={{
-        backendUrl,
-        isLoggedIn,
-        setIsLoggedin,
-        userData,
-        setUserData,
-        getUserData,
-      }}
-    >
+    <AppContent.Provider value={value}>
       {props.children}
     </AppContent.Provider>
   );
 };
+
+export default AppContent;
