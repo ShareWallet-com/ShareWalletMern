@@ -13,7 +13,7 @@ const FriendRequests = () => {
 
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`${backendUrl}api/users/${currentUserId}`);
+        const res = await axios.get(`${backendUrl}api/user/data`);
         setRequests(res.data.friendRequests || []);
       } catch (error) {
         console.error('Error fetching user:', error);
