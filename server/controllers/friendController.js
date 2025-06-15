@@ -5,7 +5,7 @@ export const searchUsers = async (req, res) => {
   try {
     const users = await userModel.find({
       name: { $regex: query, $options: 'i' }
-    }).select('name _id username email');
+    }).select('name _id username email');   // for changing 
     res.json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
