@@ -4,9 +4,9 @@ export const getUserData = async(req,res) =>{
     try {
         const userId = req.user.id;
         const user = await userModel.findById(userId);
-        if(!user){
-            return { success: false, message: "User not found" };
-        }
+        if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" }); // ✅ Proper 404 response
+    }
 
         res.json({
             success: true,
@@ -24,8 +24,6 @@ export const getUserData = async(req,res) =>{
         });
         
     } catch (error) {
-        return { success: false, message: "User not found" };
-
-        
-    }
+    return res.status(500).json({ success: false, message: "Internal Server Error" }); // ✅ Proper error response
+  }
 }
