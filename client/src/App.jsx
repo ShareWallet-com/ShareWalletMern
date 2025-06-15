@@ -7,6 +7,7 @@ import ResetPassword from './pages/ResetPassword'
 import {ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Dashboard from './components/Dashboard'
+import FriendsPage from './pages/Friends'
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route path='/email-verify' element={<EmailVerify/>}/>
         <Route path='/reset-passsword' element={<ResetPassword/>}/>
         <Route path='/dashboard' element={<Dashboard/>}/>
+        <Route path="/friends" element={<FriendsPage />} />
         
       </Routes>
     </div>

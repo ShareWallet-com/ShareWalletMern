@@ -55,17 +55,15 @@ const FriendRequests = () => {
         <p>No friend requests</p>
       ) : (
         <ul>
-          {requests.map(id => (
-            <li key={id} className="flex items-center justify-between mb-2">
-              <span>User ID: {id}</span>
-              <button
-                onClick={() => acceptRequest(id)}
-                className="px-2 py-1 text-white bg-blue-600 rounded"
-              >
-                Accept
-              </button>
-            </li>
-          ))}
+          {requests.map(user => (
+  <li key={user._id} className="flex items-center justify-between mb-2">
+    <span>{user.name}</span>
+    <button onClick={() => acceptRequest(user._id)} className="px-2 py-1 text-white bg-blue-600 rounded">
+      Accept
+    </button>
+  </li>
+))}
+
         </ul>
       )}
     </div>
