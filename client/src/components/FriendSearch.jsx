@@ -1,15 +1,17 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
 import { AppContent } from '../context/AppContext';
+import axios from 'axios';
 
-const FriendSearch = ({ currentUserId }) => {
+const FriendSearch = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
-  const {backendUrl} = useContext(AppContent)
+
+  const { backendUrl, userData } = useContext(AppContent);
+  const currentUserId = userData?._id;
 
   const handleSearch = async () => {
     try {
-      const res = await axios.get(backendUrl + `api/friends/search?query=${query}`);
+      const res = await axios.get(`${backendUrl}api/friends/search?query=${query}`);
       setResults(res.data);
     } catch (error) {
       console.error('Search error:', error);
@@ -17,12 +19,19 @@ const FriendSearch = ({ currentUserId }) => {
   };
 
   const sendRequest = async (receiverId) => {
+    if (!currentUserId) {
+      alert("You're not logged in.");
+      return;
+    }
+
+    console.log('Sending friend request from:', currentUserId, 'to:', receiverId);
     try {
-        console.log('Sending friend request from:', currentUserId, 'to:', receiverId);
-      await axios.post(backendUrl + `api/friends/${receiverId}/send-request`, { senderId: currentUserId });
+      await axios.post(`${backendUrl}api/friends/${receiverId}/send-request`, {
+        senderId: currentUserId,
+      });
       alert('Friend request sent!');
     } catch (error) {
-      alert(error.response.data.message);
+      alert(error?.response?.data?.message || 'Request failed');
     }
   };
 
