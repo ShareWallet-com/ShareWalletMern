@@ -98,7 +98,20 @@ export const login = async(req,res)=>{
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
           });
           
-        return res.json({success:true});
+        return res.json({success:true ,
+
+            user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        mobileNumber: user.mobileNumber,
+        username: user.username,
+        dateOfBirth: user.dateOfBirth,
+        isVerified: user.isVerified,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      }
+        });
 
     } catch (error) {
         return res.json({success:false,message:error.message});
