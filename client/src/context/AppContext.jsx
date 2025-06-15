@@ -2,78 +2,51 @@ import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-// Create Context
 export const AppContent = createContext();
 
-// App Context Provider
 export const AppContextProvider = (props) => {
-  // Axios config
   axios.defaults.withCredentials = true;
 
-  // Constants
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-  // State
   const [isLoggedIn, setIsLoggedin] = useState(false);
-  const [userData, setUserData] = useState(null); // ✅ Corrected: use null instead of false
+  const [userData, setUserData] = useState(null);
 
-  // Fetch logged-in user data
   const getUserData = async () => {
     try {
-      const res = await axios.get(backendUrl + 'api/user/data');
-      if (res.data.success) {
-        setUserData(res.data.user);
-      } else {
-        setUserData(null);
-        toast.error("Failed to fetch user data");
-      }
-    } catch (error) {
-      console.log("Error fetching user data:", error.message);
-      setUserData(null);
-    }
-  };
-
-  // Check authentication on load
-useEffect(() => {
-  const checkAuth = async () => {
-    try {
-      const res = await axios.get(backendUrl + 'api/auth/is-auth', {
-        withCredentials: true
+      const res = await axios.get(`${backendUrl}api/user/data`, {
+        withCredentials: true,
       });
 
       if (res.data.success) {
+        setUserData(res.data.user);
         setIsLoggedin(true);
-        await getUserData(); // ✅ fetch detailed user info
       } else {
-        setIsLoggedin(false);
         setUserData(null);
+        setIsLoggedin(false);
       }
-    } catch (err) {
-      console.log("Auth check error:", err.message);
-      setIsLoggedin(false);
+    } catch (error) {
+      console.error("Error fetching user data:", error.message);
       setUserData(null);
+      setIsLoggedin(false);
     }
   };
 
-  checkAuth();
-}, []);
-
-
-  // Value provided to children
-  const value = {
-    backendUrl,
-    isLoggedIn,
-    setIsLoggedin,
-    userData,
-    setUserData,
-    getUserData
-  };
+  useEffect(() => {
+    getUserData();
+  }, []);
 
   return (
-    <AppContent.Provider value={value}>
+    <AppContent.Provider
+      value={{
+        backendUrl,
+        isLoggedIn,
+        setIsLoggedin,
+        userData,
+        setUserData,
+        getUserData,
+      }}
+    >
       {props.children}
     </AppContent.Provider>
   );
 };
-
-export default AppContent;
