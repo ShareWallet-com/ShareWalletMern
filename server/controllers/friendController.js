@@ -1,4 +1,4 @@
-import userModel from '../models/User.js';
+import userModel from '../models/userModel.js';
 
 export const searchUsers = async (req, res) => {
   const { query } = req.query;
