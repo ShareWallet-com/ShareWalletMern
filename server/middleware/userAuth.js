@@ -1,7 +1,11 @@
 import jwt from 'jsonwebtoken';
+
+
 const userAuth = async (req,res,next)=>{
     console.log("Auth middleware: req.cookies =", req.cookies);
+
     const {token} = req.cookies;
+
     if(!token){
         return res.json({success:false,message:"Unauthorized access, please login first"});
     }
@@ -11,12 +15,11 @@ const userAuth = async (req,res,next)=>{
 
         if(tokenDecode.id){
             req.user = { id: tokenDecode.id }; // ✅ consistent naming
-            next();
+            return next();
 
         }else{
             return res.json({success:false,message:"Not Authorized, please login first"});
         }
-        next();
 
     } catch (error) {
         return res.json({success:false,message:error.message});
