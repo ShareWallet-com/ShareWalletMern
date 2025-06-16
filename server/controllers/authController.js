@@ -207,17 +207,19 @@ export const verifyEmail = async(req,res)=>{
 
 
 export const isAuthenticated = async (req, res) => {
-  const token = req.cookies.token;
-  if (!token) return res.json({ success: false, message: "No token" });
-
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await userModel.findById(decoded.id).select("-password");
-    if (!user) return res.json({ success: false, message: "User not found" });
+    const user = await userModel.findOne({email}); // remove password from response
 
-    return res.json({ success: true, user });
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    return res.json({
+      success: true,
+      user,
+    });
   } catch (error) {
-    return res.json({ success: false, message: "Invalid token" });
+    return res.json({ success: false, message: error.message });
   }
 };
 
