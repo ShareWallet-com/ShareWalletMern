@@ -78,12 +78,13 @@ const Navbar = () => {
   }
    
   {/* User Avatar or Login on Right */}
-  <div>
+  <div> 
+    <p className="mb-4 text-sm font-medium text-black">
+          Hey {userData ? userData.name : " "}
+    </p>
     {userData ? (
       <div className='relative flex items-center justify-center w-8 h-8 text-white bg-black rounded-full group'>
-        <p className="mb-4 text-sm font-medium text-black">
-          Hey {userData ? userData.name : " "}
-        </p>
+        
         {userData.name[0].toUpperCase()}
         <div className='absolute top-0 right-0 z-10 hidden pt-10 text-black rounded group-hover:block'>
           <ul className='p-2 m-0 text-sm list-none bg-gray-100'>
