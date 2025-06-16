@@ -11,9 +11,8 @@ return (
     <div>
       <Navbar/>
     </div>
-    <FriendsPage/>
-    <FriendsList/>
-    <div className="flex flex-col items-center justify-center bg-gray-100 h-[90vh]">
+    
+    <div className="flex flex-row items-center justify-around bg-gray-100 h-[90vh]">
       <div className="p-6 text-center bg-white shadow-xl rounded-2xl">
         <h1 className="mb-4 text-2xl font-bold">
           Hey {userData ? userData.name : " "}, Welcome to <span className="text-indigo-600">ShareWallet</span>
@@ -23,6 +22,11 @@ return (
           Get Started
         </button> */}
       </div>
+      <div className='bg-white shadow-xl rounded-2xl'>
+        <FriendsPage/>
+        <FriendsList/>
+      </div>
+      
     </div>
   </>
 )
