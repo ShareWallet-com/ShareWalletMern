@@ -78,9 +78,9 @@ const Navbar = () => {
   }
    
   {/* User Avatar or Login on Right */}
-  <div> 
+  <div className='flex items-center'> 
     <p className="mb-4 text-sm font-medium text-black">
-          Hey {userData ? userData.name : " "}
+         {userData ? userData.name : " "}
     </p>
     {userData ? (
       <div className='relative flex items-center justify-center w-8 h-8 text-white bg-black rounded-full group'>
