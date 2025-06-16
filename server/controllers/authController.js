@@ -41,7 +41,7 @@ export const register = async(req,res)=>{
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',       // only use secure on production (Render, Vercel, etc.)
             sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',  // None if secure, Lax for dev
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            // maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             path: '/' // always include this for logout to work
           });
           
@@ -95,7 +95,7 @@ export const login = async(req,res)=>{
             httpOnly: true,
             secure: true, // because you're on HTTPS (Render)
             sameSite: 'None', // required for cross-origin cookies
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+            // maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
           });
           
         return res.json({success:true ,

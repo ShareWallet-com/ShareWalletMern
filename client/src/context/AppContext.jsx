@@ -36,28 +36,30 @@ export const AppContextProvider = ({ children }) => {
   };
 
   // ✅ Check login status on mount
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await axios.get(`${backendUrl}api/auth/is-auth`, {
-          withCredentials: true,
-        });
+useEffect(() => {
+  const checkAuth = async () => {
+    try {
+      const res = await axios.get(`${backendUrl}api/auth/is-auth`, {
+        withCredentials: true, // Important for sending session cookie
+      });
 
-        if (res.data.success) {
-          await getUserData(); // ✅ Safe fallback
-        } else {
-          setIsLoggedin(false);
-          setUserData(null);
-        }
-      } catch (error) {
-        console.error("Auth check failed:", error.message);
+      if (res.data.success) {
+        await getUserData();       // ✅ Get fresh user data from backend
+        setIsLoggedin(true);       // ✅ Make sure login state is updated
+      } else {
         setIsLoggedin(false);
         setUserData(null);
       }
-    };
+    } catch (error) {
+      console.error("Auth check failed:", error.message);
+      setIsLoggedin(false);
+      setUserData(null);
+    }
+  };
 
-    checkAuth();
-  }, []);
+  checkAuth();
+}, []);
+
 
   return (
     <AppContent.Provider
