@@ -54,7 +54,6 @@ const Navbar = () => {
     <div className="flex items-center justify-between w-full px-4 py-2">
   {/* Logo on Left */}
   <div>
-  {/* Desktop Logo */}
   <img
     src="https://ik.imagekit.io/sharewallet/Group%2068.png?updatedAt=1749847778836"
     alt="Logo"
@@ -82,6 +81,9 @@ const Navbar = () => {
   <div>
     {userData ? (
       <div className='relative flex items-center justify-center w-8 h-8 text-white bg-black rounded-full group'>
+        <p className="mb-4 text-2xl font-medium">
+          Hey {userData ? userData.name : " "}, Welcome to <span className="text-indigo-600">ShareWallet</span>
+        </p>
         {userData.name[0].toUpperCase()}
         <div className='absolute top-0 right-0 z-10 hidden pt-10 text-black rounded group-hover:block'>
           <ul className='p-2 m-0 text-sm list-none bg-gray-100'>
