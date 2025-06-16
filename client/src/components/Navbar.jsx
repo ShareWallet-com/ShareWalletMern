@@ -81,8 +81,8 @@ const Navbar = () => {
   <div>
     {userData ? (
       <div className='relative flex items-center justify-center w-8 h-8 text-white bg-black rounded-full group'>
-        <p className="mb-4 text-2xl font-medium">
-          Hey {userData ? userData.name : " "}, Welcome to <span className="text-indigo-600">ShareWallet</span>
+        <p className="mb-4 text-sm font-medium text-black">
+          Hey {userData ? userData.name : " "}
         </p>
         {userData.name[0].toUpperCase()}
         <div className='absolute top-0 right-0 z-10 hidden pt-10 text-black rounded group-hover:block'>
