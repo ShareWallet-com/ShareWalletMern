@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { AppContent } from '../context/AppContext';
 import Navbar from './Navbar';
 import FriendsPage from '../pages/Friends';
