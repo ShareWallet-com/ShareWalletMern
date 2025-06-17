@@ -17,6 +17,8 @@ const io = new Server(server, {
     credentials: true
   }
 });
+
+
 export { io };
 const PORT = process.env.PORT || 4000;
 connectDB();
@@ -42,19 +44,25 @@ app.use('/api/friends', friendRoutes);
 
 
 
-io.on("connection", (socket) => {
-  console.log("✅ User connected:", socket.id);
+const userSocketMap = new Map(); // userId => socketId
 
-  // Emit a notification (you can replace this with dynamic logic)
-  socket.emit("notification", {
-    message: "You have a new notification!",
-    timestamp: new Date(),
+io.on('connection', (socket) => {
+  socket.on('register', (userId) => {
+    userSocketMap.set(userId, socket.id);
   });
 
-  socket.on("disconnect", () => {
-    console.log("❌ User disconnected:", socket.id);
+  socket.on('disconnect', () => {
+    for (let [userId, socketId] of userSocketMap) {
+      if (socketId === socket.id) {
+        userSocketMap.delete(userId);
+        break;
+      }
+    }
   });
 });
+
+app.set('userSocketMap', userSocketMap); // store map in app
+app.set('io', io);
 
 
 server.listen(PORT,()=>console.log(`Server is running on port ${PORT}`)

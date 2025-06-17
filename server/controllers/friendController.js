@@ -18,7 +18,6 @@ export const sendFriendRequest = async (req, res) => {
   const receiverId = req.params.id;
 
 
-
   if (!senderId || !receiverId) {
     return res.status(400).json({ success: false, message: "Missing sender or receiver ID" });
   }
@@ -45,10 +44,17 @@ export const sendFriendRequest = async (req, res) => {
     await receiver.save();
     await sender.save();
 
-    io.emit('notification', {
-      message: `You received a friend request!`,
-      timestamp: new Date()
-    });
+    const io = req.app.get('io');
+const userSocketMap = req.app.get('userSocketMap');
+
+const receiverSocketId = userSocketMap.get(receiverId);
+if (receiverSocketId) {
+  io.to(receiverSocketId).emit('notification', {
+    message: `You received a friend request from ${sender.name}`,
+    timestamp: new Date()
+  });
+}
+
 
     return res.json({ success: true, message: "Friend request sent" });
   } catch (err) {
