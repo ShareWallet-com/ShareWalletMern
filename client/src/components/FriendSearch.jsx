@@ -5,6 +5,7 @@ import axios from 'axios';
 const FriendSearch = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
+  const [sentRequests, setSentRequests] = useState([]); // 👈 track sent requests
 
   const { backendUrl, userData } = useContext(AppContent);
   const currentUserId = userData?._id;
@@ -21,26 +22,25 @@ const FriendSearch = () => {
     }
   };
 
-const sendRequest = async (receiverId) => {
-  if (!currentUserId) {
-    alert("You're not logged in.");
-    return;
-  }
+  const sendRequest = async (receiverId) => {
+    if (!currentUserId) {
+      alert("You're not logged in.");
+      return;
+    }
 
-  console.log('Sending friend request from:', currentUserId, 'to:', receiverId);
-  try {
-    await axios.post(
-      `${backendUrl}api/friends/${receiverId}/send-request`,
-      {}, // ✅ Empty body
-      { withCredentials: true } // ✅ Ensure cookie is sent
-    );
-    alert('Friend request sent!');
-  } catch (error) {
-    console.error('Request error:', error);
-    alert(error?.response?.data?.message || 'Request failed');
-  }
-};
-
+    try {
+      await axios.post(
+        `${backendUrl}api/friends/${receiverId}/send-request`,
+        {},
+        { withCredentials: true }
+      );
+      alert('Friend request sent!');
+      setSentRequests(prev => [...prev, receiverId]); // ✅ Update state
+    } catch (error) {
+      console.error('Request error:', error);
+      alert(error?.response?.data?.message || 'Request failed');
+    }
+  };
 
   return (
     <div className="p-4">
@@ -66,10 +66,15 @@ const sendRequest = async (receiverId) => {
           <li key={user._id} className="flex items-center justify-between mb-2">
             <span>{user.name}</span>
             <button
+              disabled={sentRequests.includes(user._id)}
               onClick={() => sendRequest(user._id)}
-              className="px-2 py-1 text-white bg-green-500 rounded"
+              className={`px-2 py-1 rounded ${
+                sentRequests.includes(user._id)
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-green-500 text-white'
+              }`}
             >
-              Add Friend
+              {sentRequests.includes(user._id) ? 'Sent' : 'Add Friend'}
             </button>
           </li>
         ))}

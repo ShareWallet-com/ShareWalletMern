@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import AppContent from '../context/AppContext';
+import socket from '../utils/socket';
 
 const FriendsList = () => {
   const { backendUrl, userData, getUserData } = useContext(AppContent);
@@ -31,6 +32,16 @@ const FriendsList = () => {
 
     fetchFriends();
   }, [userData, backendUrl]);
+
+  useEffect(() => {
+  if (!userData?._id) return;
+
+  socket.on('friend_request_accepted', (data) => {
+    setFriends(prev => [...prev, data]);
+  });
+
+  return () => socket.off('friend_request_accepted');
+}, [userData]);
 
   // ✅ Handle friend removal
   const handleRemoveFriend = async (friendId) => {
