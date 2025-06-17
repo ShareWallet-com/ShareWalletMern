@@ -19,6 +19,9 @@ function Dashboard() {
   // ✅ Step 2: Listen for events (only if socket is connected)
   useEffect(() => {
     const socket = getSocket();
+    // const socket = getSocket();
+console.log("🔍 getSocket() returned:", socket);
+
     if (!socket || typeof socket.on !== 'function') {
       console.warn('⚠️ Socket not ready or invalid');
       return;
@@ -31,6 +34,9 @@ function Dashboard() {
     const handleNewFriend = (data) => {
       toast.info(`🤝 You are now friends with ${data.name}`);
     };
+    console.log("🧪 Socket at useEffect:", socket);
+console.log("🧪 typeof socket:", typeof socket);
+console.log("🧪 socket.on exists:", socket && typeof socket.on);
 
     socket.on('friend_request_accepted', handleFriendRequestAccepted);
     socket.on('new_friend', handleNewFriend);
