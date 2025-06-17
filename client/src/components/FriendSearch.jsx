@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { AppContent } from '../context/AppContext';
 import axios from 'axios';
-import socket from '../utils/socket'; // ✅ Import socket for live events
+import { connectSocket } from '../utils/socket'; // ✅ Import socket for live events
 
 const FriendSearch = () => {
   const [query, setQuery] = useState('');
@@ -40,7 +40,7 @@ const FriendSearch = () => {
       setSentRequests(prev => [...prev, receiverId]);
 
       // ✅ Emit socket event for live update
-      socket.emit('friend_request_sent', {
+      connectSocket.emit('friend_request_sent', {
         sender: {
           _id: userData._id,
           name: userData.name
