@@ -3,27 +3,18 @@ import { AppContent } from '../context/AppContext';
 import Navbar from './Navbar';
 import FriendsPage from '../pages/Friends';
 import FriendsList from './FriendsList';
-import { connectSocket, getSocket } from '../utils/socket';
+import { getSocket } from '../utils/socket'; // ⬅️ Only getSocket used here
 import { toast } from 'react-toastify';
 
 function Dashboard() {
   const { userData } = useContext(AppContent);
 
-  // ✅ Step 1: Connect to socket
-  useEffect(() => {
-    if (userData?._id) {
-      connectSocket(userData._id);
-    }
-  }, [userData]);
-
-  // ✅ Step 2: Listen for events (only if socket is connected)
+  // ✅ Listen for events (only if socket is connected)
   useEffect(() => {
     const socket = getSocket();
-    // const socket = getSocket();
-console.log("🔍 getSocket() returned:", socket);
 
     if (!socket || typeof socket.on !== 'function') {
-      console.warn('⚠️ Socket not ready or invalid');
+      console.warn('⚠️ Socket is not ready or invalid:', socket);
       return;
     }
 
@@ -34,19 +25,15 @@ console.log("🔍 getSocket() returned:", socket);
     const handleNewFriend = (data) => {
       toast.info(`🤝 You are now friends with ${data.name}`);
     };
-    console.log("🧪 Socket at useEffect:", socket);
-console.log("🧪 typeof socket:", typeof socket);
-console.log("🧪 socket.on exists:", socket && typeof socket.on);
 
     socket.on('friend_request_accepted', handleFriendRequestAccepted);
     socket.on('new_friend', handleNewFriend);
 
-    // ✅ Cleanup to avoid duplicate listeners
     return () => {
       socket.off('friend_request_accepted', handleFriendRequestAccepted);
       socket.off('new_friend', handleNewFriend);
     };
-  }, [userData?._id]); // react to user ID only
+  }, [userData?._id]);
 
   return (
     <>
