@@ -17,9 +17,7 @@ export const sendFriendRequest = async (req, res) => {
   const senderId = req.user.id;
   const receiverId = req.params.id;
 
-  console.log('📨 Friend request received:');
-  console.log('Sender:', senderId);
-  console.log('Receiver:', receiverId);
+
 
   if (!senderId || !receiverId) {
     return res.status(400).json({ success: false, message: "Missing sender or receiver ID" });

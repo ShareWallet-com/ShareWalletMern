@@ -10,6 +10,14 @@ import http from 'http';
 import { Server } from 'socket.io'; 
 
 const app = express();
+const server = http.createServer(app); // ✅ Create server manually
+const io = new Server(server, {
+  cors: {
+    origin: ['https://sharewalletmern-frontend.onrender.com'],
+    credentials: true
+  }
+});
+export { io };
 const PORT = process.env.PORT || 3000;
 connectDB();
 
@@ -33,14 +41,6 @@ app.use('/api/friends', friendRoutes);
 
 
 
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ['GET', 'POST'],
-    credentials: true
-  }
-});
 
 io.on("connection", (socket) => {
   console.log("✅ User connected:", socket.id);
