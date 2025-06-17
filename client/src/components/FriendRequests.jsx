@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import AppContent from '../context/AppContext';
-import useSocket from '../utils/socket.js';
+import socket from '../utils/socket.js';
 
 const FriendRequests = () => {
   const { backendUrl, userData } = useContext(AppContent);
@@ -33,11 +33,11 @@ const FriendRequests = () => {
   useEffect(() => {
   if (!currentUserId) return;
 
-  useSocket.on('friend_request_received', (data) => {
+  socket.on('friend_request_received', (data) => {
     setRequests(prev => [...prev, data]);
   });
 
-  return () => useSocket.off('friend_request_received');
+  return () => socket.off('friend_request_received');
 }, [currentUserId]);
   
   const acceptRequest = async (senderId) => {

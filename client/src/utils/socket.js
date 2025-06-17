@@ -1,16 +1,11 @@
-import { useContext } from 'react';
-import { AppContent } from '../context/AppContext';
+// src/utils/socket.js
 import { io } from 'socket.io-client';
 
-export const useSocket = () => {
-  const { userData } = useContext(AppContent);
+const socket = io('https://sharewalletmern-backend.onrender.com', {
+  withCredentials: true,
+  query: {
+    userId: localStorage.getItem('userId'), // optional
+  },
+});
 
-  const socket = io('https://your-backend', {
-    withCredentials: true,
-    query: {
-      userId: userData?._id,
-    },
-  });
-
-  return socket;
-};
+export default socket; // ✅ This is a default export
