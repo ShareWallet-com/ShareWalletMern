@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import AppContent from '../context/AppContext';
-import socket from '../utils/socket';
+import socket from '../utils/socket.js';
 
 const FriendRequests = () => {
   const { backendUrl, userData } = useContext(AppContent);
