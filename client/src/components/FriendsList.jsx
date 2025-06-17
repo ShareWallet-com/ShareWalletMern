@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import AppContent from '../context/AppContext';
-import socket from '../utils/socket';
+import { connectSocket } from '../utils/socket';
 
 const FriendsList = () => {
   const { backendUrl, userData, getUserData } = useContext(AppContent);
@@ -49,10 +49,10 @@ const FriendsList = () => {
       });
     };
 
-    socket.on('friend_request_accepted', handleAccepted);
+    connectSocket.on('friend_request_accepted', handleAccepted);
 
     return () => {
-      socket.off('friend_request_accepted', handleAccepted);
+      connectSocket.off('friend_request_accepted', handleAccepted);
     };
   }, [currentUserId]);
 
@@ -64,10 +64,10 @@ const FriendsList = () => {
       setFriends(prev => prev.filter(friend => friend._id !== removedUserId));
     };
 
-    socket.on('friend_removed', handleRemoved);
+    connectSocket.on('friend_removed', handleRemoved);
 
     return () => {
-      socket.off('friend_removed', handleRemoved);
+      connectSocket.off('friend_removed', handleRemoved);
     };
   }, [currentUserId]);
 
@@ -81,7 +81,7 @@ const FriendsList = () => {
       setFriends(prev => prev.filter(friend => friend._id !== friendId));
 
       // (Optional) Notify friend their connection is removed
-      socket.emit('friend_removed_notify', {
+      connectSocket.emit('friend_removed_notify', {
         removerId: currentUserId,
         removedId: friendId,
       });
