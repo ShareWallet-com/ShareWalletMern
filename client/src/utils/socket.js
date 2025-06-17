@@ -1,10 +1,9 @@
-// socket.js
 import { io } from 'socket.io-client';
 
 let socket = null;
 
 export const connectSocket = (userId) => {
-  if (socket) return; // Prevent double connection
+  if (socket) return; // Avoid reconnecting
 
   socket = io('https://sharewalletmern-backend.onrender.com', {
     withCredentials: true,
@@ -12,7 +11,7 @@ export const connectSocket = (userId) => {
 
   socket.on('connect', () => {
     console.log('🔌 Connected to Socket.IO:', socket.id);
-    socket.emit('register', userId); // Send userId for identification
+    socket.emit('register', userId); // Notify server of this user
   });
 
   socket.on('disconnect', () => {
