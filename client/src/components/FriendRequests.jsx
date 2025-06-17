@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import AppContent from '../context/AppContext';
+import { AppContent } from '../context/AppContext';
 import socket from '../utils/socket.js';
 
 const FriendRequests = () => {
@@ -9,20 +9,20 @@ const FriendRequests = () => {
 
   const [requests, setRequests] = useState([]);
 
+  // Fetch populated friend request users
   useEffect(() => {
     if (!currentUserId) return;
 
     const fetchRequests = async () => {
       try {
         const res = await axios.get(`${backendUrl}api/user/data`, {
-          withCredentials: true, // ✅ Ensure token is sent
+          withCredentials: true,
         });
 
-        // ✅ Check that friendRequests exists on user
         const friendRequests = res.data.user?.friendRequests || [];
         setRequests(friendRequests);
       } catch (error) {
-        console.error('Error fetching user:', error);
+        console.error('Error fetching friend requests:', error);
         setRequests([]);
       }
     };
@@ -30,26 +30,32 @@ const FriendRequests = () => {
     fetchRequests();
   }, [currentUserId, backendUrl]);
 
+  // Listen for real-time incoming requests
   useEffect(() => {
-  if (!currentUserId) return;
+    if (!currentUserId) return;
 
-  socket.on('friend_request_received', (data) => {
-    setRequests(prev => [...prev, data]);
-  });
+    const handleIncomingRequest = (user) => {
+      setRequests(prev => [...prev, user]);
+    };
 
-  return () => socket.off('friend_request_received');
-}, [currentUserId]);
-  
+    socket.on('friend_request_received', handleIncomingRequest);
+
+    return () => {
+      socket.off('friend_request_received', handleIncomingRequest);
+    };
+  }, [currentUserId]);
+
+  // Accept friend request
   const acceptRequest = async (senderId) => {
     try {
       await axios.post(
         `${backendUrl}api/friends/${senderId}/accept-request`,
         { receiverId: currentUserId },
-        { withCredentials: true } // ✅ important for auth
+        { withCredentials: true }
       );
 
       alert('Friend request accepted!');
-      setRequests((prev) => prev.filter(id => id !== senderId));
+      setRequests(prev => prev.filter(user => user._id !== senderId));
     } catch (error) {
       console.error('Accept error:', error);
       alert(error?.response?.data?.message || 'Error accepting request');
@@ -67,14 +73,16 @@ const FriendRequests = () => {
       ) : (
         <ul>
           {requests.map(user => (
-  <li key={user._id} className="flex items-center justify-between mb-2">
-    <span>{user.name}</span>
-    <button onClick={() => acceptRequest(user._id)} className="px-2 py-1 text-white bg-blue-600 rounded">
-      Accept
-    </button>
-  </li>
-))}
-
+            <li key={user._id} className="flex items-center justify-between mb-2">
+              <span>{user.name}</span>
+              <button
+                onClick={() => acceptRequest(user._id)}
+                className="px-2 py-1 text-white bg-blue-600 rounded"
+              >
+                Accept
+              </button>
+            </li>
+          ))}
         </ul>
       )}
     </div>
