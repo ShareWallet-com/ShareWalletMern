@@ -3,7 +3,7 @@ import { AppContent } from '../context/AppContext';
 import Navbar from './Navbar';
 import FriendsPage from '../pages/Friends';
 import FriendsList from './FriendsList';
-import { connectSocket, getSocket } from '../socket';
+import { connectSocket, getSocket } from '../utils/socket';
 import { toast } from 'react-toastify';
 
 function Dashboard() {
