@@ -74,6 +74,7 @@ export const acceptFriendRequest = async (req, res) => {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
+    // Remove pending request
     receiver.friendRequests = receiver.friendRequests.filter(
       id => id.toString() !== senderId
     );
@@ -81,40 +82,45 @@ export const acceptFriendRequest = async (req, res) => {
       id => id.toString() !== receiverId
     );
 
-    receiver.friends.push(senderId);
-    sender.friends.push(receiverId);
+    // Add each other as friends (prevent duplicates)
+    if (!receiver.friends.includes(senderId)) {
+      receiver.friends.push(senderId);
+    }
+    if (!sender.friends.includes(receiverId)) {
+      sender.friends.push(receiverId);
+    }
 
     await receiver.save();
     await sender.save();
 
+    // Emit socket events
     const io = req.app.get('io');
-const map = req.app.get('userSocketMap');
+    const map = req.app.get('userSocketMap');
 
-const receiverSocketId = map.get(receiverId);
-const senderSocketId = map.get(senderId);
+    const receiverSocketId = map.get(receiverId);
+    const senderSocketId = map.get(senderId);
 
-// Notify sender to update their friend list
-if (senderSocketId) {
-  io.to(senderSocketId).emit('friend_request_accepted', {
-    _id: receiver._id,
-    name: receiver.name
-  });
-}
+    if (senderSocketId) {
+      io.to(senderSocketId).emit('friend_request_accepted', {
+        _id: receiver._id,
+        name: receiver.name,
+      });
+    }
 
-// Notify receiver as well (optional, if UI needs update)
-if (receiverSocketId) {
-  io.to(receiverSocketId).emit('friend_added', {
-    _id: sender._id,
-    name: sender.name
-  });
-}
-
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('new_friend', {
+        _id: sender._id,
+        name: sender.name,
+      });
+    }
 
     res.json({ message: 'Friend request accepted' });
   } catch (err) {
+    console.error('Error accepting friend request:', err.message);
     res.status(500).json({ error: err.message });
   }
 };
+
 
 export const removeFriend = async (req, res) => {
   const userId = req.user.id;           // Logged-in user
