@@ -1,11 +1,11 @@
-import { useContext } from 'react'
-import { AppContent } from '../context/AppContext';
+// import { useContext } from 'react'
+// import { AppContent } from '../context/AppContext';
 import Navbar from './Navbar';
 import FriendsPage from '../pages/Friends';
 import FriendsList from './FriendsList';
 
 function Dashboard() {
-  const { userData } = useContext(AppContent);
+  // const { userData } = useContext(AppContent);
 return (
   <>
     <div>
