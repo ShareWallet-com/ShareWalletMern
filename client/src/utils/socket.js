@@ -1,11 +1,17 @@
-// src/utils/socket.js
+// socket.js
 import { io } from 'socket.io-client';
 
-const socket = io('https://sharewalletmern-backend.onrender.com', {
-  withCredentials: true,
-  query: {
-    userId: localStorage.getItem('userId'), // optional
-  },
-});
+let socket;
 
-export default socket; // ✅ This is a default export
+export const connectSocket = (userId) => {
+  socket = io('https://sharewalletmern-backend.onrender.com', {
+    withCredentials: true,
+  });
+
+  socket.on('connect', () => {
+    console.log('🔌 Connected to Socket.IO:', socket.id);
+    socket.emit('register', userId);
+  });
+};
+
+export const getSocket = () => socket;

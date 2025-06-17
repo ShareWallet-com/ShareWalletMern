@@ -1,11 +1,12 @@
 import React, { useState, useContext } from 'react';
 import { AppContent } from '../context/AppContext';
 import axios from 'axios';
+import socket from '../utils/socket'; // ✅ Import socket for live events
 
 const FriendSearch = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
-  const [sentRequests, setSentRequests] = useState([]); // 👈 track sent requests
+  const [sentRequests, setSentRequests] = useState([]);
 
   const { backendUrl, userData } = useContext(AppContent);
   const currentUserId = userData?._id;
@@ -34,8 +35,18 @@ const FriendSearch = () => {
         {},
         { withCredentials: true }
       );
-      alert('Friend request sent!');
-      setSentRequests(prev => [...prev, receiverId]); // ✅ Update state
+
+      // ✅ Update sentRequests state
+      setSentRequests(prev => [...prev, receiverId]);
+
+      // ✅ Emit socket event for live update
+      socket.emit('friend_request_sent', {
+        sender: {
+          _id: userData._id,
+          name: userData.name
+        },
+        receiverId
+      });
     } catch (error) {
       console.error('Request error:', error);
       alert(error?.response?.data?.message || 'Request failed');
@@ -46,7 +57,9 @@ const FriendSearch = () => {
     <div className="p-4">
       <h2 className="mb-2 text-xl font-bold">Find Friends</h2>
 
-      {!currentUserId && <p className="text-red-600">Please log in to search and add friends.</p>}
+      {!currentUserId && (
+        <p className="text-red-600">Please log in to search and add friends.</p>
+      )}
 
       <div className="flex gap-2 mb-4">
         <input
@@ -56,14 +69,20 @@ const FriendSearch = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <button onClick={handleSearch} className="px-2 py-1 text-white bg-blue-500 rounded">
+        <button
+          onClick={handleSearch}
+          className="px-2 py-1 text-white bg-blue-500 rounded"
+        >
           Search
         </button>
       </div>
 
       <ul className="mt-4">
-        {results.map(user => (
-          <li key={user._id} className="flex items-center justify-between mb-2">
+        {results.map((user) => (
+          <li
+            key={user._id}
+            className="flex items-center justify-between mb-2"
+          >
             <span>{user.name}</span>
             <button
               disabled={sentRequests.includes(user._id)}

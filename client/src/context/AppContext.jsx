@@ -1,6 +1,8 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { connectSocket } from '../utils/socket';
+
 
 export const AppContent = createContext();
 
@@ -60,6 +62,11 @@ useEffect(() => {
   checkAuth();
 }, []);
 
+useEffect(() => {
+  if (userData?._id) {
+    connectSocket(userData._id);
+  }
+}, [userData]);
 
   return (
     <AppContent.Provider

@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import AppContent from '../context/AppContext';
-import socket from '../utils/socket.js';
+import { toast } from "react-toastify";
+import { connectSocket } from '../utils/socket';
 
 const FriendRequests = () => {
   const { backendUrl, userData } = useContext(AppContent);
@@ -30,15 +31,25 @@ const FriendRequests = () => {
     fetchRequests();
   }, [currentUserId, backendUrl]);
 
-  useEffect(() => {
-  if (!currentUserId) return;
+useEffect(() => {
+  const socket = connectSocket();
+  if (!socket || !currentUserId) return;
 
   socket.on('friend_request_received', (data) => {
-    setRequests(prev => [...prev, data]);
+    setRequests((prev) => [...prev, data]);
   });
 
-  return () => socket.off('friend_request_received');
+  socket.on('friend_request_accepted', (data) => {
+    // Optional: show notification or update UI
+    toast.success(`${data.name} accepted your friend request!`);
+  });
+
+  return () => {
+    socket.off('friend_request_received');
+    socket.off('friend_request_accepted');
+  };
 }, [currentUserId]);
+
   
   const acceptRequest = async (senderId) => {
     try {

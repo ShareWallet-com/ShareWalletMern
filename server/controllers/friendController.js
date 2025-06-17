@@ -44,16 +44,14 @@ export const sendFriendRequest = async (req, res) => {
     await receiver.save();
     await sender.save();
 
-    const io = req.app.get('io');
-const userSocketMap = req.app.get('userSocketMap');
-
-const receiverSocketId = userSocketMap.get(receiverId);
+const receiverSocketId = req.app.get('userSocketMap').get(receiverId);
 if (receiverSocketId) {
-  io.to(receiverSocketId).emit('notification', {
-    message: `You received a friend request from ${sender.name}`,
-    timestamp: new Date()
+  req.app.get('io').to(receiverSocketId).emit('friend_request_received', {
+    _id: sender._id,
+    name: sender.name
   });
 }
+
 
 
     return res.json({ success: true, message: "Friend request sent" });
@@ -89,6 +87,29 @@ export const acceptFriendRequest = async (req, res) => {
     await receiver.save();
     await sender.save();
 
+    const io = req.app.get('io');
+const map = req.app.get('userSocketMap');
+
+const receiverSocketId = map.get(receiverId);
+const senderSocketId = map.get(senderId);
+
+// Notify sender to update their friend list
+if (senderSocketId) {
+  io.to(senderSocketId).emit('friend_request_accepted', {
+    _id: receiver._id,
+    name: receiver.name
+  });
+}
+
+// Notify receiver as well (optional, if UI needs update)
+if (receiverSocketId) {
+  io.to(receiverSocketId).emit('friend_added', {
+    _id: sender._id,
+    name: sender.name
+  });
+}
+
+
     res.json({ message: 'Friend request accepted' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -107,12 +128,21 @@ export const removeFriend = async (req, res) => {
       return res.status(404).json({ success: false, message: "User or friend not found" });
     }
 
-    // Remove each other from friends array
+    // Remove each other from friends list
     user.friends = user.friends.filter(id => id.toString() !== friendId);
     friend.friends = friend.friends.filter(id => id.toString() !== userId);
 
     await user.save();
     await friend.save();
+
+    // ✅ Emit to friend (if online) that they were removed
+    const io = req.app.get('io');
+    const userSocketMap = req.app.get('userSocketMap');
+    const friendSocketId = userSocketMap.get(friendId);
+
+    if (friendSocketId) {
+      io.to(friendSocketId).emit('friend_removed', userId); // send back remover's ID
+    }
 
     return res.json({ success: true, message: "Friend removed successfully" });
   } catch (err) {
