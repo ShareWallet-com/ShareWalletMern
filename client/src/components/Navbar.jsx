@@ -12,6 +12,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { userData, backendUrl, setUserData, setIsLoggedin } = useContext(AppContent);
 
+  // eslint-disable-next-line no-unused-vars
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
