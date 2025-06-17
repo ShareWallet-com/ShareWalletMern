@@ -1,4 +1,5 @@
 import userModel from '../models/userModel.js';
+import { io } from '../server.js';
 
 export const searchUsers = async (req, res) => {
   const { query } = req.query;
@@ -45,6 +46,11 @@ export const sendFriendRequest = async (req, res) => {
 
     await receiver.save();
     await sender.save();
+
+    io.emit('notification', {
+      message: `You received a friend request!`,
+      timestamp: new Date()
+    });
 
     return res.json({ success: true, message: "Friend request sent" });
   } catch (err) {
