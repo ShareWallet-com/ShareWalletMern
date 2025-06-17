@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { AppContent } from '../context/AppContext';
 import axios from 'axios';
-import { connectSocket } from '../utils/socket'; // ✅ Import socket for live events
+import { connectSocket, getSocket } from '../utils/socket'; // ✅ use getSocket instead
 
 const FriendSearch = () => {
   const [query, setQuery] = useState('');
@@ -10,6 +10,12 @@ const FriendSearch = () => {
 
   const { backendUrl, userData } = useContext(AppContent);
   const currentUserId = userData?._id;
+
+  useEffect(() => {
+    if (currentUserId) {
+      connectSocket(currentUserId); // ✅ Ensure connection is established once
+    }
+  }, [currentUserId]);
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -36,17 +42,20 @@ const FriendSearch = () => {
         { withCredentials: true }
       );
 
-      // ✅ Update sentRequests state
+      // ✅ Update UI
       setSentRequests(prev => [...prev, receiverId]);
 
-      // ✅ Emit socket event for live update
-      connectSocket.emit('friend_request_sent', {
-        sender: {
-          _id: userData._id,
-          name: userData.name
-        },
-        receiverId
-      });
+      // ✅ Emit live event
+      const socket = getSocket();
+      if (socket) {
+        socket.emit('friend_request_sent', {
+          sender: {
+            _id: userData._id,
+            name: userData.name
+          },
+          receiverId
+        });
+      }
     } catch (error) {
       console.error('Request error:', error);
       alert(error?.response?.data?.message || 'Request failed');

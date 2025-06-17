@@ -1,13 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import AppContent from '../context/AppContext';
-import { connectSocket } from '../utils/socket';
+import { AppContent } from '../context/AppContext'; // 🛠️ Corrected import
+import { connectSocket, getSocket } from '../utils/socket'; // ✅ Import both
 
 const FriendsList = () => {
   const { backendUrl, userData, getUserData } = useContext(AppContent);
   const [friends, setFriends] = useState([]);
 
   const currentUserId = userData?._id;
+
+  // ✅ Connect socket once
+  useEffect(() => {
+    if (currentUserId) {
+      connectSocket(currentUserId);
+    }
+  }, [currentUserId]);
 
   // ✅ Initial Fetch of Friends
   useEffect(() => {
@@ -38,36 +45,40 @@ const FriendsList = () => {
   // ✅ Realtime: Listen for new accepted friend requests
   useEffect(() => {
     if (!currentUserId) return;
+    const socket = getSocket();
+    if (!socket) return;
 
     const handleAccepted = (data) => {
       if (!data || !data._id) return;
 
       setFriends((prev) => {
         const exists = prev.find(f => f._id === data._id);
-        if (exists) return prev; // Avoid duplicates
+        if (exists) return prev;
         return [...prev, data];
       });
     };
 
-    connectSocket.on('friend_request_accepted', handleAccepted);
+    socket.on('friend_request_accepted', handleAccepted);
 
     return () => {
-      connectSocket.off('friend_request_accepted', handleAccepted);
+      socket.off('friend_request_accepted', handleAccepted);
     };
   }, [currentUserId]);
 
-  // (Optional) Realtime: If a friend removes you
+  // ✅ Realtime: If a friend removes you
   useEffect(() => {
     if (!currentUserId) return;
+    const socket = getSocket();
+    if (!socket) return;
 
     const handleRemoved = (removedUserId) => {
       setFriends(prev => prev.filter(friend => friend._id !== removedUserId));
     };
 
-    connectSocket.on('friend_removed', handleRemoved);
+    socket.on('friend_removed', handleRemoved);
 
     return () => {
-      connectSocket.off('friend_removed', handleRemoved);
+      socket.off('friend_removed', handleRemoved);
     };
   }, [currentUserId]);
 
@@ -80,13 +91,15 @@ const FriendsList = () => {
 
       setFriends(prev => prev.filter(friend => friend._id !== friendId));
 
-      // (Optional) Notify friend their connection is removed
-      connectSocket.emit('friend_removed_notify', {
-        removerId: currentUserId,
-        removedId: friendId,
-      });
+      const socket = getSocket();
+      if (socket) {
+        socket.emit('friend_removed_notify', {
+          removerId: currentUserId,
+          removedId: friendId,
+        });
+      }
 
-      await getUserData(); // Optional if context is needed elsewhere
+      await getUserData();
     } catch (error) {
       console.error("Failed to remove friend:", error);
       alert("Failed to remove friend");
