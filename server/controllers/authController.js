@@ -196,19 +196,16 @@ export const verifyEmail = async(req,res)=>{
 
 export const isAuthenticated = async (req, res) => {
   try {
-    const user = await userModel.findOne({email}); // remove password from response
+		const user = await User.findById(req.userId).select("-password");
+		if (!user) {
+			return res.status(400).json({ success: false, message: "User not found" });
+		}
 
-    if (!user) {
-      return res.json({ success: false, message: "User not found" });
-    }
-
-    return res.json({
-      success: true,
-      user,
-    });
-  } catch (error) {
-    return res.json({ success: false, message: error.message });
-  }
+		res.status(200).json({ success: true, user });
+	} catch (error) {
+		console.log("Error in checkAuth ", error);
+		res.status(400).json({ success: false, message: error.message });
+	}
 };
 
 
