@@ -8,18 +8,14 @@ export const AppContent = createContext();
 
 export const AppContextProvider = ({ children }) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
-  // Always send cookies (very important for auth)
   axios.defaults.withCredentials = true;
-
   const [isLoggedIn, setIsLoggedin] = useState(false);
   const [userData, setUserData] = useState(null);
 
-  // ✅ Fetch authenticated user
   const getUserData = async () => {
     try {
       const res = await axios.get(`${backendUrl}api/user/data`, {
-        withCredentials: true, // ✅ REQUIRED for cross-origin cookies
+        withCredentials: true, 
       });
 
       if (res.data.success) {
@@ -37,17 +33,17 @@ export const AppContextProvider = ({ children }) => {
     }
   };
 
-  // ✅ Check login status on mount
+
 useEffect(() => {
   const checkAuth = async () => {
     try {
       const res = await axios.get(`${backendUrl}api/auth/is-auth`, {
-        withCredentials: true, // Important for sending session cookie
+        withCredentials: true, 
       });
 
       if (res.data.success) {
-        await getUserData();       // ✅ Get fresh user data from backend
-        setIsLoggedin(true);       // ✅ Make sure login state is updated
+        await getUserData();       
+        setIsLoggedin(true);       
       } else {
         setIsLoggedin(false);
         setUserData(null);
