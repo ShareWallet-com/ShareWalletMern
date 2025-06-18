@@ -10,7 +10,6 @@ export const connectSocket = (userId) => {
   });
 
   socket.on('connect', () => {
-    console.log('🔌 Connected to Socket.IO:', socket.id);
     socket.emit('register', userId); // Notify server of this user
   });
 

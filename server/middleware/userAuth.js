@@ -30,7 +30,7 @@ const userAuth = async (req, res, next) => {
       });
     }
 
-    req.user = user; // Now req.user contains full user object (without password)
+    req.user = { id: user._id };
     next();
   } catch (err) {
     return res.status(403).json({

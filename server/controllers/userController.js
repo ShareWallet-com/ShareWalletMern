@@ -5,7 +5,7 @@ export const getUserData = async(req,res) =>{
         const userId = req.user.id;
        const user = await userModel.findById(userId).populate('friends', 'name _id').populate('friendRequests', 'name _id');
         if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" }); // ✅ Proper 404 response
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
         res.json({
