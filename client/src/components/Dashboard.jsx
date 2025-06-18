@@ -3,39 +3,41 @@ import { AppContent } from '../context/AppContext';
 import Navbar from './Navbar';
 import FriendsPage from '../pages/Friends';
 import FriendsList from './FriendsList';
-import { getSocket } from '../utils/socket'; 
+import { getSocket } from '../utils/socket';
 import { toast } from 'react-toastify';
 
 function Dashboard() {
   const { userData } = useContext(AppContent);
 
-  // ✅ Listen for events (only if socket is connected)
- useEffect(() => {
-  if (!userData?._id) return;
+  useEffect(() => {
+    if (!userData?._id) return;
 
-  const interval = setInterval(() => {
     const socket = getSocket();
+    if (!socket) return;
 
-    if (socket && typeof socket.on === 'function') {
-      console.log("✅ Socket is now ready");
+    const handleConnect = () => {
+      console.log("✅ Socket connected:", socket.id);
+    };
 
-      socket.on('friend_request_accepted', (data) => {
-        toast.success(`🎉 ${data.name} accepted your friend request`);
-      });
+    const handleFriendAccepted = (data) => {
+      toast.success(`🎉 ${data.name} accepted your friend request`);
+    };
 
-      socket.on('new_friend', (data) => {
-        toast.info(`🤝 You are now friends with ${data.name}`);
-      });
+    const handleNewFriend = (data) => {
+      toast.info(`🤝 You are now friends with ${data.name}`);
+    };
 
-      clearInterval(interval); // ✅ Stop checking
-    } else {
-      console.log("⏳ Waiting for socket to connect...");
-    }
-  }, 300); // Check every 300ms
+    socket.on('connect', handleConnect);
+    socket.on('friend_request_accepted', handleFriendAccepted);
+    socket.on('new_friend', handleNewFriend);
 
-  return () => clearInterval(interval); // Cleanup on unmount
-}, [userData?._id]);
-
+    // ✅ Clean up on unmount
+    return () => {
+      socket.off('connect', handleConnect);
+      socket.off('friend_request_accepted', handleFriendAccepted);
+      socket.off('new_friend', handleNewFriend);
+    };
+  }, [userData?._id]);
 
   return (
     <>

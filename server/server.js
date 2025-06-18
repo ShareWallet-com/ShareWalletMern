@@ -10,7 +10,7 @@ import http from 'http';
 import { Server } from 'socket.io'; 
 
 const app = express();
-const server = http.createServer(app); // ✅ Create server manually
+const server = http.createServer(app); 
 const io = new Server(server, {
   cors: {
     origin: ['https://sharewalletmern-frontend.onrender.com'],
@@ -25,7 +25,6 @@ connectDB();
 
 const allowedOrigins = ['http://localhost:5173','https://sharewalletmern-frontend.onrender.com'];
 
-// const allowedOrigins = ['http://localhost:5173', 'https://your-frontend-domain.com'];
 
 app.use(express.json());
 app.use(cookieParser());
@@ -34,7 +33,7 @@ app.use(cors({
   credentials: true
 }));
 
-//api Endpoints
+
 
 
 app.use('/api/auth',authRouter)
@@ -44,7 +43,7 @@ app.use('/api/friends', friendRoutes);
 
 
 
-const userSocketMap = new Map(); // userId => socketId
+const userSocketMap = new Map(); 
 
 io.on('connection', (socket) => {
   socket.on('register', (userId) => {
@@ -61,7 +60,7 @@ io.on('connection', (socket) => {
   });
 });
 
-app.set('userSocketMap', userSocketMap); // store map in app
+app.set('userSocketMap', userSocketMap); 
 app.set('io', io);
 
 
