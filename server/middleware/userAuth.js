@@ -2,28 +2,20 @@ import jwt from 'jsonwebtoken';
 import userModel from '../models/userModel.js'
 
 const userAuth = async (req,res,next)=>{
-    console.log("Auth middleware: req.cookies =", req.cookies);
-
     const {token} = req.cookies;
-
     if(!token){
         return res.json({success:false,message:"Unauthorized access, please login first"});
     }
-
     try {
         const tokenDecode = jwt.verify(token,process.env.JWT_SECRET);
-
         if(tokenDecode.id){
-            req.user = { id: tokenDecode.id }; // ✅ consistent naming
+            req.user = { id: tokenDecode.id };
             return next();
-
         }else{
             return res.json({success:false,message:"Not Authorized, please login first"});
         }
-
     } catch (error) {
         return res.json({success:false,message:error.message});
-        
     }
 }
 
