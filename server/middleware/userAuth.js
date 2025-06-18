@@ -1,34 +1,42 @@
 import jwt from 'jsonwebtoken';
-import userModel from '../models/userModel.js'
+import userModel from '../models/userModel.js';
 
-const userAuth = async (req,res,next)=>{
-    const {token} = req.cookies;
-    if(!token){
-        return res.json({success:false,message:"Unauthorized access, please login first"});
-    }
-    try {
-        const tokenDecode = jwt.verify(token,process.env.JWT_SECRET);
-        if(tokenDecode.id){
-            req.user = { id: tokenDecode.id };
-            return next();
-        }else{
-            return res.json({success:false,message:"Not Authorized, please login first"});
-        }
-    } catch (error) {
-        return res.json({success:false,message:error.message});
-    }
-}
+// ✅ Unified and corrected middleware
+const userAuth = async (req, res, next) => {
+  const token = req.cookies.token;
 
-export const isAuth = async (req, res, next) => {
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized access, please login first"
+    });
+  }
+
   try {
-    const token = req.cookies.token;
-    if (!token) return res.status(401).json({ success: false, message: "No token found" });
-
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await userModel.findById(decoded.id).select('-password');
+
+    if (!decoded?.id) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token, please login again"
+      });
+    }
+
+    const user = await userModel.findById(decoded.id).select('-password');
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    req.user = user; // Now req.user contains full user object (without password)
     next();
   } catch (err) {
-    return res.status(401).json({ success: false, message: "Unauthorized" });
+    return res.status(403).json({
+      success: false,
+      message: "Session expired or invalid. Please login again."
+    });
   }
 };
 
