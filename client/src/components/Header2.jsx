@@ -1,4 +1,5 @@
 import React from 'react'
+import LocomotiveScroll from 'locomotive-scroll';
 
 function Header2() {
   return (

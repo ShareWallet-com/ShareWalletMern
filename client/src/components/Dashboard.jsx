@@ -31,7 +31,6 @@ function Dashboard() {
     socket.on('friend_request_accepted', handleFriendAccepted);
     socket.on('new_friend', handleNewFriend);
 
-    // ✅ Clean up on unmount
     return () => {
       socket.off('connect', handleConnect);
       socket.off('friend_request_accepted', handleFriendAccepted);
