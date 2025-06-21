@@ -8,7 +8,21 @@ import { toast } from 'react-toastify';
 
 function Dashboard() {
   const { userData } = useContext(AppContent);
+  
+  useEffect(() => {
+  const handleBeforeUnload = (e) => {
+    e.preventDefault();
+    e.returnValue = ''; // Required for Chrome to show the confirmation dialog
+  };
 
+  window.addEventListener('beforeunload', handleBeforeUnload);
+
+  return () => {
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+  };
+}, []);
+
+  
   useEffect(() => {
     if (!userData?._id) return;
 
