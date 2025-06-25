@@ -1,8 +1,8 @@
 import { useContext, useEffect } from 'react';
 import { AppContent } from '../context/AppContext';
-import Navbar from './Navbar';
-import FriendsPage from '../pages/Friends';
-import FriendsList from './FriendsList';
+import Navbar from '../components/Navbar';
+import FriendsPage from './Friends';
+import FriendsList from '../components/FriendsList';
 import { getSocket } from '../utils/socket';
 import { toast } from 'react-toastify';
 
