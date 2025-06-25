@@ -56,7 +56,7 @@ function Dashboard() {
     <>
       <Navbar />
 
-      <div className="flex flex-col md:flex-row items-center justify-around bg-gray-100 h-[90vh]">
+      <div className="flex flex-col md:flex-row items-center justify-around bg-gray-100 h-[100vh]">
         <div className="p-6 text-center bg-white rounded-2xl">
           <h2 className="mb-6 text-lg text-gray-600">Soon We Launch</h2>
         </div>
