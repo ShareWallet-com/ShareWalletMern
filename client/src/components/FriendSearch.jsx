@@ -80,7 +80,7 @@ const FriendSearch = () => {
         />
         <button
           onClick={handleSearch}
-          className="px-2 py-1 text-white bg-blue-500 rounded"
+          className="px-2 py-1 text-white rounded-full bg-[#6D29DF]"
         >
           Search
         </button>

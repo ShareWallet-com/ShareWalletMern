@@ -4,7 +4,7 @@ import LocomotiveScroll from 'locomotive-scroll';
 function Header2() {
   return (
     <div className='relative flex items-center flex-col justify-center bg-gradient-to-br from-gray-100 via-    [#f0f0ff] to-[#e5e6ff] 
-            animate-[gradientMove_8s_ease-in-out_infinite] bg-[length:200%_200%] h-[95vh] gap-4 px-4 overflow-hidden'>
+            animate-[gradientMove_8s_ease-in-out_infinite] bg-[length:200%_200%] h-[100vh] gap-4 px-4 overflow-hidden'>
 
 
 
