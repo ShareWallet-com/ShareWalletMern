@@ -52,9 +52,9 @@ export const getUserGroups = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const groups = await groupModel
+    const groups = await Group
       .find({ members: userId })
-      .populate('members', 'name') // to get member names
+      .populate('members', 'name') // ✅ get member names
       .populate('createdBy', 'name');
 
     res.json({ groups });
