@@ -8,14 +8,17 @@ const CreateGroup = () => {
   const [selected, setSelected] = useState([]);
   const [groupName, setGroupName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [groups, setGroups] = useState([]); // ✅ New state for group list
 
+  // 🔁 Fetch Friends
   useEffect(() => {
     if (!userData?._id) return;
 
     const fetchFriends = async () => {
       try {
         const res = await axios.get(`${backendUrl}api/friends/list`, {
-            withCredentials: true,});
+          withCredentials: true,
+        });
         setFriends(res.data.friends || []);
       } catch (err) {
         console.error('Error fetching friends', err);
@@ -24,6 +27,24 @@ const CreateGroup = () => {
 
     fetchFriends();
   }, [userData, backendUrl]);
+
+  // 🔁 Fetch Groups
+  const fetchGroups = async () => {
+    try {
+      const res = await axios.get(`${backendUrl}api/groups/user`, {
+        withCredentials: true,
+      });
+      setGroups(res.data.groups || []);
+    } catch (err) {
+      console.error('❌ Error fetching groups:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (userData?._id) {
+      fetchGroups(); // ✅ Initial group fetch
+    }
+  }, [userData]);
 
   const toggleSelect = (id) => {
     setSelected((prev) =>
@@ -44,9 +65,11 @@ const CreateGroup = () => {
         memberIds: [...selected, userData._id],
         createdBy: userData._id,
       });
+
       alert('✅ Group created successfully!');
       setGroupName('');
       setSelected([]);
+      fetchGroups(); // ✅ Refresh group list
     } catch (err) {
       console.error('Error creating group:', err);
       alert('❌ Failed to create group.');
@@ -56,7 +79,7 @@ const CreateGroup = () => {
   };
 
   return (
-    <div className="max-w-lg p-6 mx-auto mt-8 bg-white shadow-lg rounded-xl">
+    <div className="max-w-2xl p-6 mx-auto mt-8 bg-white shadow-lg rounded-xl">
       <h2 className="mb-4 text-2xl font-bold text-center">Create New Group</h2>
 
       <input
@@ -100,6 +123,25 @@ const CreateGroup = () => {
       >
         {loading ? 'Creating...' : 'Create Group'}
       </button>
+
+      {/* ✅ Show Created Groups */}
+      <div className="mt-8">
+        <h3 className="mb-2 text-xl font-semibold">Your Groups:</h3>
+        {groups.length === 0 ? (
+          <p className="text-gray-500">You haven’t created any groups yet.</p>
+        ) : (
+          <ul className="space-y-3">
+            {groups.map((group) => (
+              <li key={group._id} className="p-4 border rounded shadow-sm">
+                <h4 className="font-bold">{group.name}</h4>
+                <p className="text-sm text-gray-600">
+                  Members: {group.members.map((m) => m.name).join(', ')}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };
