@@ -156,3 +156,18 @@ export const removeFriend = async (req, res) => {
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+export const getFriendsList = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id).populate('friends', 'name _id');
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.json({ success: true, friends: user.friends });
+  } catch (err) {
+    console.error('Error fetching friends list:', err.message);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};

@@ -1,13 +1,26 @@
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { AppContent } from '../context/AppContext'; // 🛠️ Corrected import
-import { connectSocket, getSocket } from '../utils/socket'; // ✅ Import both
+import { AppContent } from '../context/AppContext';
+import { connectSocket, getSocket } from '../utils/socket';
 
 const FriendsList = () => {
   const { backendUrl, userData, getUserData } = useContext(AppContent);
   const [friends, setFriends] = useState([]);
 
   const currentUserId = userData?._id;
+
+  // ✅ Fetch Populated Friends List from Backend
+  const fetchFriends = async () => {
+    if (!currentUserId) return;
+    try {
+      const res = await axios.get(`${backendUrl}api/friends/list`, {
+        withCredentials: true,
+      });
+      setFriends(res.data.friends || []);
+    } catch (error) {
+      console.error('❌ Error fetching friends:', error);
+    }
+  };
 
   // ✅ Connect socket once
   useEffect(() => {
@@ -16,33 +29,12 @@ const FriendsList = () => {
     }
   }, [currentUserId]);
 
-  // ✅ Initial Fetch of Friends
+  // ✅ Initial Fetch
   useEffect(() => {
-    if (!currentUserId) return;
-
-    const fetchFriends = async () => {
-      try {
-        const res = await axios.get(`${backendUrl}api/user/data`, {
-          withCredentials: true,
-        });
-
-        const friendList = res.data.user?.friends || [];
-
-        const uniqueFriends = friendList.filter(
-          (friend, index, self) =>
-            index === self.findIndex(f => f._id === friend._id)
-        );
-
-        setFriends(uniqueFriends);
-      } catch (error) {
-        console.error('Error fetching friends:', error);
-      }
-    };
-
     fetchFriends();
   }, [currentUserId, backendUrl]);
 
-  // ✅ Realtime: Listen for new accepted friend requests
+  // ✅ Realtime: Listen for accepted requests
   useEffect(() => {
     if (!currentUserId) return;
     const socket = getSocket();
@@ -50,22 +42,17 @@ const FriendsList = () => {
 
     const handleAccepted = (data) => {
       if (!data || !data._id) return;
-
       setFriends((prev) => {
         const exists = prev.find(f => f._id === data._id);
-        if (exists) return prev;
-        return [...prev, data];
+        return exists ? prev : [...prev, data];
       });
     };
 
     socket.on('friend_request_accepted', handleAccepted);
-
-    return () => {
-      socket.off('friend_request_accepted', handleAccepted);
-    };
+    return () => socket.off('friend_request_accepted', handleAccepted);
   }, [currentUserId]);
 
-  // ✅ Realtime: If a friend removes you
+  // ✅ Realtime: Removed
   useEffect(() => {
     if (!currentUserId) return;
     const socket = getSocket();
@@ -76,13 +63,10 @@ const FriendsList = () => {
     };
 
     socket.on('friend_removed', handleRemoved);
-
-    return () => {
-      socket.off('friend_removed', handleRemoved);
-    };
+    return () => socket.off('friend_removed', handleRemoved);
   }, [currentUserId]);
 
-  // ✅ Remove Friend Locally and Emit Live Update
+  // ✅ Remove Friend
   const handleRemoveFriend = async (friendId) => {
     try {
       await axios.delete(`${backendUrl}api/friends/${friendId}/remove`, {
