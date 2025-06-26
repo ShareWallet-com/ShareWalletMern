@@ -1,33 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import { AppContent } from '../context/AppContext';
 
-const CreateGroup = ({ currentUser }) => {
+const CreateGroup = () => {
+  const { userData, backendUrl } = useContext(AppContent);
   const [friends, setFriends] = useState([]);
   const [selected, setSelected] = useState([]);
   const [groupName, setGroupName] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Fetch friends from backend
   useEffect(() => {
+    if (!userData?._id) return;
+
     const fetchFriends = async () => {
       try {
-        const res = await axios.get(`/api/friends/${currentUser._id}`);
+        const res = await axios.get(`${backendUrl}api/friends/${userData._id}`);
         setFriends(res.data.friends || []);
       } catch (err) {
         console.error('Error fetching friends', err);
       }
     };
-    fetchFriends();
-  }, [currentUser]);
 
-  // Toggle friend selection
+    fetchFriends();
+  }, [userData, backendUrl]);
+
   const toggleSelect = (id) => {
     setSelected((prev) =>
       prev.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]
     );
   };
 
-  // Handle group creation
   const handleCreate = async () => {
     if (!groupName || selected.length < 2) {
       alert('Please enter a group name and select at least 2 friends.');
@@ -36,10 +38,10 @@ const CreateGroup = ({ currentUser }) => {
 
     try {
       setLoading(true);
-      await axios.post('/api/groups/create', {
+      await axios.post(`${backendUrl}api/groups/create`, {
         name: groupName,
-        memberIds: [...selected, currentUser._id],
-        createdBy: currentUser._id,
+        memberIds: [...selected, userData._id],
+        createdBy: userData._id,
       });
       alert('✅ Group created successfully!');
       setGroupName('');
