@@ -5,63 +5,97 @@ const CreateGroup = ({ currentUser }) => {
   const [friends, setFriends] = useState([]);
   const [selected, setSelected] = useState([]);
   const [groupName, setGroupName] = useState('');
+  const [loading, setLoading] = useState(false);
 
+  // Fetch friends from backend
   useEffect(() => {
     const fetchFriends = async () => {
-      const res = await axios.get(`/api/friends/${currentUser._id}`);
-      setFriends(res.data.friends); // Adjust based on your API
+      try {
+        const res = await axios.get(`/api/friends/${currentUser._id}`);
+        setFriends(res.data.friends || []);
+      } catch (err) {
+        console.error('Error fetching friends', err);
+      }
     };
     fetchFriends();
-  }, []);
+  }, [currentUser]);
 
+  // Toggle friend selection
   const toggleSelect = (id) => {
     setSelected((prev) =>
       prev.includes(id) ? prev.filter((uid) => uid !== id) : [...prev, id]
     );
   };
 
+  // Handle group creation
   const handleCreate = async () => {
-    if (!groupName || selected.length < 2) return alert('Provide group name and at least 2 members');
+    if (!groupName || selected.length < 2) {
+      alert('Please enter a group name and select at least 2 friends.');
+      return;
+    }
 
-    await axios.post('/api/groups/create', {
-      name: groupName,
-      memberIds: [...selected, currentUser._id],
-      createdBy: currentUser._id,
-    });
-
-    alert('Group Created!');
-    setGroupName('');
-    setSelected([]);
+    try {
+      setLoading(true);
+      await axios.post('/api/groups/create', {
+        name: groupName,
+        memberIds: [...selected, currentUser._id],
+        createdBy: currentUser._id,
+      });
+      alert('✅ Group created successfully!');
+      setGroupName('');
+      setSelected([]);
+    } catch (err) {
+      console.error('Error creating group:', err);
+      alert('❌ Failed to create group.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="p-4 bg-white shadow-md rounded-xl">
-      <h2 className="mb-2 text-xl font-bold">Create Group</h2>
+    <div className="max-w-lg p-6 mx-auto mt-8 bg-white shadow-lg rounded-xl">
+      <h2 className="mb-4 text-2xl font-bold text-center">Create New Group</h2>
+
       <input
         type="text"
-        placeholder="Group Name"
+        placeholder="Enter Group Name"
         value={groupName}
         onChange={(e) => setGroupName(e.target.value)}
-        className="w-full p-2 mb-3 border"
+        className="w-full p-2 mb-4 border border-gray-300 rounded"
       />
-      <div className="grid grid-cols-2 gap-2 overflow-y-auto max-h-40">
-        {friends.map((friend) => (
-          <div
-            key={friend._id}
-            onClick={() => toggleSelect(friend._id)}
-            className={`p-2 border rounded cursor-pointer ${
-              selected.includes(friend._id) ? 'bg-blue-100' : ''
-            }`}
-          >
-            {friend.name}
-          </div>
-        ))}
+
+      <p className="mb-2 font-semibold text-gray-600">Select Friends:</p>
+      <div className="grid grid-cols-2 gap-3 mb-4 overflow-y-auto max-h-48">
+        {friends.length > 0 ? (
+          friends.map((friend) => (
+            <div
+              key={friend._id}
+              onClick={() => toggleSelect(friend._id)}
+              className={`cursor-pointer p-2 rounded border flex items-center justify-between hover:bg-blue-50 ${
+                selected.includes(friend._id)
+                  ? 'bg-blue-100 border-blue-400'
+                  : 'border-gray-300'
+              }`}
+            >
+              <span>{friend.name}</span>
+              {selected.includes(friend._id) && (
+                <span className="text-sm font-bold text-blue-600">✔</span>
+              )}
+            </div>
+          ))
+        ) : (
+          <p className="col-span-2 text-sm text-gray-400">
+            No friends found to add.
+          </p>
+        )}
       </div>
+
       <button
-        className="px-4 py-2 mt-4 text-white bg-blue-500 rounded"
         onClick={handleCreate}
+        disabled={loading}
+        className="w-full px-4 py-2 font-semibold text-white transition bg-blue-600 rounded hover:bg-blue-700"
       >
-        Create
+        {loading ? 'Creating...' : 'Create Group'}
       </button>
     </div>
   );
