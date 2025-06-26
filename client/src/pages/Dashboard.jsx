@@ -5,6 +5,7 @@ import FriendsPage from './Friends';
 import FriendsList from '../components/FriendsList';
 import { getSocket } from '../utils/socket';
 import { toast } from 'react-toastify';
+import CreateGroup from '../components/Creategroup';
 
 function Dashboard() {
   const { userData } = useContext(AppContent);
@@ -59,6 +60,9 @@ function Dashboard() {
       <div className="flex flex-col md:flex-row items-center justify-around bg-gray-100 h-[100vh]">
         <div className="p-6 text-center bg-white rounded-2xl">
           <h2 className="mb-6 text-lg text-gray-600">Soon We Launch</h2>
+        </div>
+        <div>
+          <CreateGroup/>
         </div>
         <div className="bg-white shadow-xl rounded-2xl">
           <FriendsPage />

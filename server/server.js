@@ -6,6 +6,8 @@ import connectDB from './config/mongodb.js';
 import authRouter from './routes/authRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import friendRoutes from './routes/friendRoutes.js';
+import groupRoutes from './routes/groupRoutes.js';
+
 import http from 'http'; 
 import { Server } from 'socket.io'; 
 
@@ -39,7 +41,7 @@ app.use(cors({
 app.use('/api/auth',authRouter)
 app.use('/api/user',userRouter)
 app.use('/api/friends', friendRoutes);
-
+app.use('/api/groups', groupRoutes)
 
 
 
