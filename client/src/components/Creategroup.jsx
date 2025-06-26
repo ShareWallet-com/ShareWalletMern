@@ -14,7 +14,8 @@ const CreateGroup = () => {
 
     const fetchFriends = async () => {
       try {
-        const res = await axios.get(`${backendUrl}api/friends/${userData._id}`);
+        const res = await axios.get(`${backendUrl}api/friends/list`, {
+            withCredentials: true,});
         setFriends(res.data.friends || []);
       } catch (err) {
         console.error('Error fetching friends', err);
