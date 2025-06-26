@@ -18,7 +18,7 @@ const FriendsList = () => {
       });
       setFriends(res.data.friends || []);
     } catch (error) {
-      console.error('❌ Error fetching friends:', error);
+      console.error('❌ Error fetching friends:', error?.response?.data || error.message || error);
     }
   };
 
