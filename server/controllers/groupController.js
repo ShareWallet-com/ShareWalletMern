@@ -47,3 +47,19 @@ export const addFriendToGroup = async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 };
+
+export const getUserGroups = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const groups = await groupModel
+      .find({ members: userId })
+      .populate('members', 'name') // to get member names
+      .populate('createdBy', 'name');
+
+    res.json({ groups });
+  } catch (err) {
+    console.error('Error fetching user groups:', err.message);
+    res.status(500).json({ message: 'Failed to fetch groups' });
+  }
+};
