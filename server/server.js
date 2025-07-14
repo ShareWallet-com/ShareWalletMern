@@ -25,15 +25,30 @@ export { io };
 const PORT = process.env.PORT || 4000;
 connectDB();
 
-const allowedOrigins = ['http://localhost:5173','https://sharewalletmern-frontend.onrender.com'];
+const allowedOrigins = ['https://sharewalletmern-frontend.onrender.com'];
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps, curl, etc.)
+        if (!origin) return callback(null, true)
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true)
+        } else {
+            return callback(new Error('Not allowed by CORS'))
+        }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+}
+app.options('*', cors(corsOptions))
+
+app.use(cors(corsOptions))
 
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
 
 
 
