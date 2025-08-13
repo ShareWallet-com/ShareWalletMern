@@ -94,8 +94,11 @@ const CreateGroup = () => {
       setGroups((prevGroups) => prevGroups.filter((g) => g._id !== groupId));
 
     } catch (err) {
-      console.error('Error deleting group:', err);
-      alert('❌ Failed to delete group. You might not be the creator.');
+      console.error(
+        'Error deleting group:',
+        err.response?.data || err.message || err
+      );
+      alert(err.response?.data?.message || '❌ Failed to delete group.');
     }
   };
 
