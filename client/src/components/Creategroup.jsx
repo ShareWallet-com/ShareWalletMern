@@ -8,7 +8,7 @@ const CreateGroup = () => {
   const [selected, setSelected] = useState([]);
   const [groupName, setGroupName] = useState('');
   const [loading, setLoading] = useState(false);
-  const [groups, setGroups] = useState([]); // ✅ New state for group list
+  const [groups, setGroups] = useState([]);
 
   // 🔁 Fetch Friends
   useEffect(() => {
@@ -34,6 +34,7 @@ const CreateGroup = () => {
       const res = await axios.get(`${backendUrl}api/groups/user`, {
         withCredentials: true,
       });
+      // Ensure createdBy is available for deletion logic
       setGroups(res.data.groups || []);
     } catch (err) {
       console.error('❌ Error fetching groups:', err);
@@ -60,11 +61,15 @@ const CreateGroup = () => {
 
     try {
       setLoading(true);
-      await axios.post(`${backendUrl}api/groups/create`, {
-        name: groupName,
-        memberIds: [...selected, userData._id],
-        createdBy: userData._id,
-      });
+      await axios.post(
+        `${backendUrl}api/groups/create`,
+        {
+          name: groupName,
+          memberIds: [...selected, userData._id],
+          createdBy: userData._id,
+        },
+        { withCredentials: true } // Pass credentials for creation
+      );
 
       alert('✅ Group created successfully!');
       setGroupName('');
@@ -78,8 +83,30 @@ const CreateGroup = () => {
     }
   };
 
+  // ✨ NEW: Handle Group Deletion
+  const handleDelete = async (groupId) => {
+    // Add a confirmation dialog for safety
+    if (!window.confirm('Are you sure you want to delete this group?')) {
+      return;
+    }
+
+    try {
+      await axios.delete(`${backendUrl}api/groups/${groupId}`, {
+        withCredentials: true, // Important for backend authorization
+      });
+      
+      alert('🗑️ Group deleted successfully!');
+      // Update state to remove the group from the list instantly
+      setGroups((prevGroups) => prevGroups.filter((g) => g._id !== groupId));
+
+    } catch (err) {
+      console.error('Error deleting group:', err);
+      alert('❌ Failed to delete group. You might not be the creator.');
+    }
+  };
+
   return (
-    <div className="max-w-2xl p-6 mx-auto mt-8 bg-white shadow-lg rounded-xl">
+    <div className="p-6 mx-auto mt-8 max-w-2xl bg-white rounded-xl shadow-lg">
       <h2 className="mb-4 text-2xl font-bold text-center">Create New Group</h2>
 
       <input
@@ -87,11 +114,11 @@ const CreateGroup = () => {
         placeholder="Enter Group Name"
         value={groupName}
         onChange={(e) => setGroupName(e.target.value)}
-        className="w-full p-2 mb-4 border border-gray-300 rounded"
+        className="p-2 mb-4 w-full rounded border border-gray-300"
       />
 
       <p className="mb-2 font-semibold text-gray-600">Select Friends:</p>
-      <div className="grid grid-cols-2 gap-3 mb-4 overflow-y-auto max-h-48">
+      <div className="grid overflow-y-auto grid-cols-2 gap-3 mb-4 max-h-48">
         {friends.length > 0 ? (
           friends.map((friend) => (
             <div
@@ -119,7 +146,7 @@ const CreateGroup = () => {
       <button
         onClick={handleCreate}
         disabled={loading}
-        className="w-full px-4 py-2 font-semibold text-white transition bg-blue-600 rounded hover:bg-blue-700"
+        className="px-4 py-2 w-full font-semibold text-white bg-blue-600 rounded transition hover:bg-blue-700 disabled:bg-blue-300"
       >
         {loading ? 'Creating...' : 'Create Group'}
       </button>
@@ -132,11 +159,23 @@ const CreateGroup = () => {
         ) : (
           <ul className="space-y-3">
             {groups.map((group) => (
-              <li key={group._id} className="p-4 border rounded shadow-sm">
-                <h4 className="font-bold">{group.name}</h4>
-                <p className="text-sm text-gray-600">
-                  Members: {group.members.map((m) => m.name).join(', ')}
-                </p>
+              <li key={group._id} className="flex justify-between items-center p-4 rounded border shadow-sm">
+                <div>
+                  <h4 className="font-bold">{group.name}</h4>
+                  <p className="text-sm text-gray-600">
+                    Members: {group.members.map((m) => m.name).join(', ')}
+                  </p>
+                </div>
+                {/* ✨ NEW: Delete button, only shown to the group creator */}
+                {userData && group.createdBy === userData._id && (
+                  <button
+                    onClick={() => handleDelete(group._id)}
+                    className="px-3 py-1 text-sm font-semibold text-white bg-red-500 rounded transition hover:bg-red-600"
+                    aria-label={`Delete ${group.name} group`}
+                  >
+                    Delete
+                  </button>
+                )}
               </li>
             ))}
           </ul>
