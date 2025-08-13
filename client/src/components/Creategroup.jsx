@@ -14,13 +14,15 @@ const CreateGroup = () => {
     if (!userData?._id) return;
 
     const fetchFriends = async () => {
+      console.log('📡 Fetching friends for user:', userData._id);
       try {
         const res = await axios.get(`${backendUrl}api/friends/list`, {
           withCredentials: true,
         });
+        console.log('✅ Friends fetched:', res.data);
         setFriends(res.data.friends || []);
       } catch (err) {
-        console.error('Error fetching friends', err);
+        console.error('❌ Error fetching friends', err);
       }
     };
 
@@ -28,10 +30,12 @@ const CreateGroup = () => {
   }, [userData, backendUrl]);
 
   const fetchGroups = async () => {
+    console.log('📡 Fetching groups for user:', userData?._id);
     try {
       const res = await axios.get(`${backendUrl}api/groups/user`, {
         withCredentials: true,
       });
+      console.log('✅ Groups fetched:', res.data);
       setGroups(res.data.groups || []);
     } catch (err) {
       console.error('❌ Error fetching groups:', err);
@@ -56,9 +60,15 @@ const CreateGroup = () => {
       return;
     }
 
+    console.log('📤 Creating group with data:', {
+      name: groupName,
+      memberIds: [...selected, userData._id],
+      createdBy: userData._id,
+    });
+
     try {
       setLoading(true);
-      await axios.post(
+      const res = await axios.post(
         `${backendUrl}api/groups/create`,
         {
           name: groupName,
@@ -68,12 +78,13 @@ const CreateGroup = () => {
         { withCredentials: true }
       );
 
+      console.log('✅ Group creation response:', res.data);
       alert('✅ Group created successfully!');
       setGroupName('');
       setSelected([]);
       fetchGroups();
     } catch (err) {
-      console.error('Error creating group:', err);
+      console.error('❌ Error creating group:', err.response?.data || err);
       alert('❌ Failed to create group.');
     } finally {
       setLoading(false);
@@ -85,20 +96,20 @@ const CreateGroup = () => {
       return;
     }
 
+    console.log(`📤 Sending DELETE request to: ${backendUrl}api/groups/${groupId}`);
+    console.log('📦 Payload (userId):', userData._id);
+
     try {
-      await axios.delete(`${backendUrl}api/groups/${groupId}`, {
-        data: { userId: userData._id },
+      const res = await axios.delete(`${backendUrl}api/groups/${groupId}`, {
+        data: { userId: userData._id }, // Not usually needed for DELETE in URL
         withCredentials: true,
       });
-      console.log(`${backendUrl}api/groups/${groupId}`);
+
+      console.log('✅ Delete response:', res.data);
       alert('🗑️ Group deleted successfully!');
       setGroups((prevGroups) => prevGroups.filter((g) => g._id !== groupId));
-
     } catch (err) {
-      console.error(
-        'Error deleting group:',
-        err.response?.data || err.message || err
-      );
+      console.error('❌ Error deleting group:', err.response?.data || err.message || err);
       alert(err.response?.data?.message || '❌ Failed to delete group.');
     }
   };
