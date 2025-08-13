@@ -167,7 +167,7 @@ const CreateGroup = () => {
                   </p>
                 </div>
                 {/* ✨ NEW: Delete button, only shown to the group creator */}
-                {userData && group.createdBy === userData._id && (
+                {userData && group.createdBy?._id === userData._id && (
                   <button
                     onClick={() => handleDelete(group._id)}
                     className="px-3 py-1 text-sm font-semibold text-white bg-red-500 rounded transition hover:bg-red-600"
