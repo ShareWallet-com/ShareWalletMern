@@ -10,7 +10,6 @@ const CreateGroup = () => {
   const [loading, setLoading] = useState(false);
   const [groups, setGroups] = useState([]);
 
-  // 🔁 Fetch Friends
   useEffect(() => {
     if (!userData?._id) return;
 
@@ -28,13 +27,11 @@ const CreateGroup = () => {
     fetchFriends();
   }, [userData, backendUrl]);
 
-  // 🔁 Fetch Groups
   const fetchGroups = async () => {
     try {
       const res = await axios.get(`${backendUrl}api/groups/user`, {
         withCredentials: true,
       });
-      // Ensure createdBy is available for deletion logic
       setGroups(res.data.groups || []);
     } catch (err) {
       console.error('❌ Error fetching groups:', err);
@@ -43,7 +40,7 @@ const CreateGroup = () => {
 
   useEffect(() => {
     if (userData?._id) {
-      fetchGroups(); // ✅ Initial group fetch
+      fetchGroups();
     }
   }, [userData]);
 
@@ -68,13 +65,13 @@ const CreateGroup = () => {
           memberIds: [...selected, userData._id],
           createdBy: userData._id,
         },
-        { withCredentials: true } // Pass credentials for creation
+        { withCredentials: true }
       );
 
       alert('✅ Group created successfully!');
       setGroupName('');
       setSelected([]);
-      fetchGroups(); // ✅ Refresh group list
+      fetchGroups();
     } catch (err) {
       console.error('Error creating group:', err);
       alert('❌ Failed to create group.');
@@ -83,20 +80,17 @@ const CreateGroup = () => {
     }
   };
 
-  // ✨ NEW: Handle Group Deletion
   const handleDelete = async (groupId) => {
-    // Add a confirmation dialog for safety
     if (!window.confirm('Are you sure you want to delete this group?')) {
       return;
     }
 
     try {
       await axios.delete(`${backendUrl}api/groups/${groupId}`, {
-        withCredentials: true, // Important for backend authorization
+        withCredentials: true,
       });
       
       alert('🗑️ Group deleted successfully!');
-      // Update state to remove the group from the list instantly
       setGroups((prevGroups) => prevGroups.filter((g) => g._id !== groupId));
 
     } catch (err) {
@@ -151,7 +145,6 @@ const CreateGroup = () => {
         {loading ? 'Creating...' : 'Create Group'}
       </button>
 
-      {/* ✅ Show Created Groups */}
       <div className="mt-8">
         <h3 className="mb-2 text-xl font-semibold">Your Groups:</h3>
         {groups.length === 0 ? (
@@ -166,7 +159,6 @@ const CreateGroup = () => {
                     Members: {group.members.map((m) => m.name).join(', ')}
                   </p>
                 </div>
-                {/* ✨ NEW: Delete button, only shown to the group creator */}
                 {userData && group.createdBy?._id === userData._id && (
                   <button
                     onClick={() => handleDelete(group._id)}
