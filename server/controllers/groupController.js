@@ -64,29 +64,22 @@ export const getUserGroups = async (req, res) => {
   }
 };
 
-
 export const deleteGroup = async (req, res) => {
   try {
     const groupId = req.params.groupId;
     const userId = req.user.id; 
-
     const group = await Group.findById(groupId);
     if (!group) {
       return res.status(404).json({ message: "Group not found" });
     }
-
-    // ✅ Only creator can delete
     if (group.createdBy.toString() !== userId.toString()) {
       return res.status(403).json({ message: "Not authorized to delete this group" });
     }
 
-    // Remove group from all members' `groups` list
     await userModel.updateMany(
       { _id: { $in: group.members } },
       { $pull: { groups: group._id } }
     );
-
-    // Delete group
     await Group.findByIdAndDelete(groupId);
 
     res.json({ message: "Group deleted successfully" });

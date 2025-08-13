@@ -90,7 +90,7 @@ const CreateGroup = () => {
         data: { userId: userData._id },
         withCredentials: true,
       });
-      
+      console.log(`${backendUrl}api/groups/${groupId}`);
       alert('🗑️ Group deleted successfully!');
       setGroups((prevGroups) => prevGroups.filter((g) => g._id !== groupId));
 
