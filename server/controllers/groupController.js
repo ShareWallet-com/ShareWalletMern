@@ -64,11 +64,11 @@ export const getUserGroups = async (req, res) => {
   }
 };
 
-// controllers/groupController.js
+
 export const deleteGroup = async (req, res) => {
   try {
     const groupId = req.params.groupId;
-    const userId = req.user.id; // from auth middleware
+    const userId = req.user.id; 
 
     const group = await Group.findById(groupId);
     if (!group) {

@@ -87,6 +87,7 @@ const CreateGroup = () => {
 
     try {
       await axios.delete(`${backendUrl}api/groups/${groupId}`, {
+        data: { userId: userData._id },
         withCredentials: true,
       });
       
